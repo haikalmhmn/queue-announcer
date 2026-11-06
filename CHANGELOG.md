@@ -30,6 +30,14 @@ Every release, before it goes online:
 
 ---
 
+## 1.2.0 — 6 Nov 2026
+- New, more exciting announcements: "Yay! A, 1, 0, 5, your food is ready! Come and grab it at the counter."
+- New Message setting: choose from 4 announcements (the calm original is still there)
+- Ava sounds a little brighter on the words, while the code stays clear
+- The code is read a little slower than the rest, so letters and numbers are clearer
+- Repeat line now says "Once again, …"
+- Calmer gap between repeats and a steadier gap after the bell
+
 ## 1.1.2 — 6 Nov 2026
 - Floating window tries harder to open at the top-right corner
 - If Edge places it elsewhere, drag it once and it reopens in that spot

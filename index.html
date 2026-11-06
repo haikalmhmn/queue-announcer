@@ -296,9 +296,15 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
           </div>
         </div>
 
-        <div class="say-box">
-          <span class="hint">Announcement, read letter by letter</span>
-          <span class="say-line" id="sayLine"></span>
+        <div class="field">
+          <label class="label" for="msgSel">Message</label>
+          <select id="msgSel"></select>
+          <div class="say-box">
+            <span class="hint">First time</span>
+            <span class="say-line" id="sayLine"></span>
+            <span class="hint">Repeat</span>
+            <span class="say-line" id="sayAgain"></span>
+          </div>
         </div>
 
         <button type="button" class="btn outline-btn" id="testBtn" data-action="test"></button>
@@ -351,6 +357,17 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Newest first. Add each new version ON TOP; never delete or edit older entries (they are the history).
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
+    {
+      version: '1.2.0', date: '6 Nov 2026',
+      notes: [
+        'New, more exciting announcements: "Yay! A, 1, 0, 5, your food is ready! Come and grab it at the counter."',
+        'New Message setting: choose from 4 announcements (the calm original is still there)',
+        'Ava sounds a little brighter on the words, while the code stays clear',
+        'The code is read a little slower than the rest, so letters and numbers are clearer',
+        'Repeat line now says "Once again, …"',
+        'Calmer gap between repeats and a steadier gap after the bell'
+      ]
+    },
     {
       version: '1.1.2', date: '6 Nov 2026',
       notes: [
@@ -431,7 +448,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     get: function (k, d) { try { var v = localStorage.getItem('qa:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
     set: function (k, v) { try { localStorage.setItem('qa:' + k, JSON.stringify(v)); } catch (e) {} }
   };
-  var settings = Object.assign({ voice: '', speed: 'calm', times: 2, chime: true, bell: 'foodle', volume: 100, muted: false, autoPop: true }, store.get('settings', {}));
+  var settings = Object.assign({ voice: '', speed: 'calm', times: 2, chime: true, bell: 'foodle', volume: 100, message: 'yay', muted: false, autoPop: true }, store.get('settings', {}));
   function saveSettings() { store.set('settings', settings); }
 
   function todayKey() { return new Date().toDateString(); }
@@ -627,37 +644,70 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     if (settings.bell === 'classic') return chime();
     return getBuffer(settings.bell).then(function (buffer) {
       var src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = buffer; g.gain.value = vol(); src.connect(g); g.connect(ctx.destination); src.start();
-      return wait(Math.min(buffer.duration, 8) * 1000 + 200);
+      return wait(Math.min(buffer.duration, 8) * 1000 + 300);
     }).catch(function () {
       toast("Couldn't play that bell. Using the classic chime.");
       return chime();
     });
   }
 
+  // ---------- messages ----------
+  // {code} is replaced by the code read letter by letter. The code is read a little slower than
+  // the rest so letters and numbers are easy to catch.
+  var MESSAGES = [
+    { id: 'yay', name: 'Yay, your food is ready! (default)', first: 'Yay! {code}, your food is ready! Come and grab it at the counter.', again: '{code}, your food is waiting for you!' },
+    { id: 'feast', name: 'Your Foodle feast is ready', first: 'Good news, {code}! Your Foodle feast is ready. Come on over!', again: 'Hey {code}, your feast is ready!' },
+    { id: 'hot', name: 'Hot and ready', first: '{code}, it\'s hot and ready for you! See you at the counter.', again: 'Once more, {code}, your food is ready!' },
+    { id: 'collect', name: 'Please collect your order (calm)', first: '{code}. Please collect your order.', again: 'Once again, {code}.' }
+  ];
+  // The words are spoken a touch brighter (higher pitch) than the code, which stays clear and level.
+  var WORD_PITCH = 1.08;
+  var CODE_RATE = 0.9; // the code is read at 90% of the chosen speed
+  function currentMessage() {
+    for (var i = 0; i < MESSAGES.length; i++) if (MESSAGES[i].id === settings.message) return MESSAGES[i];
+    return MESSAGES[0];
+  }
+  // Splits a message into spoken parts: the code (slower) and the words around it.
+  function messageParts(template, code) {
+    var i = template.indexOf('{code}'), before = template.slice(0, i).trim(), after = template.slice(i + 6);
+    var parts = [];
+    if (before) parts.push({ text: before });
+    parts.push({ text: spelled(code) + (/^[,.!]/.test(after) ? after.charAt(0) : ''), slow: true });
+    after = after.replace(/^[,.!]\s*/, '').trim();
+    if (after) parts.push({ text: after });
+    return parts;
+  }
+
   var liveUtterances = []; // keeps utterances referenced so the browser can't drop them mid-speech
-  function makeUtter(text) {
+  function makeUtter(text, slow) {
     var u = new SpeechSynthesisUtterance(text), v = pickVoice();
     if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = 'en-US'; }
-    u.rate = RATES[settings.speed] || 0.88; u.pitch = 1; u.volume = vol();
+    u.rate = (RATES[settings.speed] || 0.88) * (slow ? CODE_RATE : 1); u.pitch = slow ? 1 : WORD_PITCH; u.volume = vol();
     return u;
   }
+  // Speaks the parts back to back (queued together, so the joins sound natural).
   // Resolves true when the voice spoke, false when it failed or never started.
-  function say(text) {
+  function say(parts) {
+    if (typeof parts === 'string') parts = [{ text: parts }];
     return new Promise(function (resolve) {
-      var u = makeUtter(text), done = false, started = false;
-      liveUtterances.push(u);
+      var us = parts.map(function (pt) { return makeUtter(pt.text, pt.slow); });
+      var done = false, started = false, chars = 0, last = us[us.length - 1];
+      parts.forEach(function (pt) { chars += pt.text.length; });
+      us.forEach(function (u) { liveUtterances.push(u); });
       function fin(ok) {
         if (done) return;
         done = true; clearTimeout(startT); clearTimeout(endT);
-        liveUtterances.splice(liveUtterances.indexOf(u), 1);
+        us.forEach(function (u) { var k = liveUtterances.indexOf(u); if (k >= 0) liveUtterances.splice(k, 1); });
         resolve(ok);
       }
       var startT = setTimeout(function () { if (!started) { try { speechSynthesis.cancel(); } catch (e) {} fin(false); } }, 5000);
-      var endT = setTimeout(function () { fin(started); }, 8000 + text.length * 250);
-      u.onstart = function () { started = true; };
-      u.onend = function () { fin(started || true); };
-      u.onerror = function (e) { fin(!!(e && (e.error === 'interrupted' || e.error === 'canceled'))); };
-      try { speechSynthesis.resume(); speechSynthesis.speak(u); } catch (e) { fin(false); }
+      var endT = setTimeout(function () { fin(started); }, 8000 + chars * 250);
+      us.forEach(function (u) {
+        u.onstart = function () { started = true; };
+        u.onerror = function (e) { fin(!!(e && (e.error === 'interrupted' || e.error === 'canceled'))); };
+      });
+      last.onend = function () { fin(true); };
+      try { speechSynthesis.resume(); us.forEach(function (u) { speechSynthesis.speak(u); }); } catch (e) { fin(false); }
     });
   }
   var watchdog = null;
@@ -673,7 +723,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     clearTimeout(watchdog);
     watchdog = setTimeout(finishSpeech, 10000 + settings.times * 9000);
     try { renderAll(); } catch (e) {}
-    var s = spelled(num), voiceOk = true;
+    var msg = currentMessage(), voiceOk = true;
     var p = Promise.resolve();
     try { speechSynthesis.cancel(); } catch (e) {}
     if (settings.chime) p = p.then(playBell).catch(function () {});
@@ -681,8 +731,8 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       (function (i) {
         p = p.then(function () {
           if (!voiceOk) return;
-          return say(i === 0 ? s + '. Please collect your order.' : s + '.').then(function (ok) { if (!ok) voiceOk = false; });
-        }).then(function () { if (voiceOk && i < settings.times - 1) return wait(700); });
+          return say(messageParts(i === 0 ? msg.first : msg.again, num)).then(function (ok) { if (!ok) voiceOk = false; });
+        }).then(function () { if (voiceOk && i < settings.times - 1) return wait(1100); });
       })(i);
     }
     return p.catch(function () { voiceOk = false; }).then(function () {
@@ -877,10 +927,19 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     els.chimeSw.setAttribute('aria-checked', String(settings.chime));
     els.autoPopSw.setAttribute('aria-checked', String(settings.autoPop));
     var ex = state.current || 'A105';
-    els.sayLine.innerHTML = '';
-    els.sayLine.appendChild(document.createTextNode('“'));
-    var b = document.createElement('b'); b.textContent = spelled(ex); els.sayLine.appendChild(b);
-    els.sayLine.appendChild(document.createTextNode('. Please collect your order.”'));
+    var msg = currentMessage();
+    [[els.sayLine, msg.first], [$('sayAgain'), msg.again]].forEach(function (pair) {
+      var el = pair[0], tpl = pair[1], i = tpl.indexOf('{code}');
+      el.innerHTML = '';
+      el.appendChild(document.createTextNode('“' + tpl.slice(0, i)));
+      var b = document.createElement('b'); b.textContent = spelled(ex); el.appendChild(b);
+      el.appendChild(document.createTextNode(tpl.slice(i + 6) + '”'));
+    });
+    var ms = $('msgSel');
+    if (!ms.options.length) MESSAGES.forEach(function (m) {
+      var o = document.createElement('option'); o.value = m.id; o.textContent = m.name; ms.appendChild(o);
+    });
+    ms.value = msg.id;
     els.testBtn.disabled = state.speaking;
     var vr = $('volRange');
     vr.value = settings.volume;
@@ -1008,6 +1067,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     clearTimeout(sel._pt);
     sel._pt = setTimeout(function () { sel.classList.remove('picked'); }, 900);
   }
+  $('msgSel').addEventListener('change', function () { settings.message = $('msgSel').value; saveSettings(); renderSettings(); markPicked($('msgSel')); });
   $('bellSel').addEventListener('change', function () { settings.bell = $('bellSel').value; saveSettings(); markPicked($('bellSel')); });
 
   function onKey(e) {
