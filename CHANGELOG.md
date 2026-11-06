@@ -30,6 +30,10 @@ Every release, before it goes online:
 
 ---
 
+## 1.0.1 — 6 Nov 2026
+- Fixed: no sound after the app moved into the floating window
+- Fixed: the very first tap was ignored when the window popped out
+
 ## 1.0.0 — 6 Nov 2026
 First release.
 - Keypad with letters A–Z and numbers 0–9 on one page

@@ -335,6 +335,13 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
     {
+      version: '1.0.1', date: '6 Nov 2026',
+      notes: [
+        'Fixed: no sound after the app moved into the floating window',
+        'Fixed: the very first tap was ignored when the window popped out'
+      ]
+    },
+    {
       version: '1.0.0', date: '6 Nov 2026',
       notes: [
         'Keypad with letters A–Z and numbers 0–9 on one page',
@@ -397,7 +404,8 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
 
   // ---------- dom ----------
   var appEl = document.getElementById('app');
-  function $(id) { return document.getElementById(id); }
+  // Look inside the app first: after it moves into the floating window it is no longer in this page.
+  function $(id) { return appEl.querySelector('#' + id) || document.getElementById(id); }
   var els = {
     nowNum: $('nowNum'), chip: $('chipSpeaking'), repeatBtn: $('repeatBtn'), muteBtn: $('muteBtn'),
     entry: $('entry'), entryText: $('entryText'), announceBtn: $('announceBtn'),
@@ -412,10 +420,10 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
 
   // static content
   els.repeatBtn.innerHTML = ic(I.repeat);
-  document.querySelector('[data-action="clear"]').innerHTML = ic(I.x, 20, 2.2);
-  document.querySelector('.nav-btn[data-go="recent"]').innerHTML = ic(I.clock) + '<span>Recent</span>';
-  document.querySelector('.nav-btn[data-go="settings"]').innerHTML = ic(I.gear) + '<span>Settings</span>';
-  Array.prototype.forEach.call(document.querySelectorAll('.back-bar'), function (b) {
+  appEl.querySelector('[data-action="clear"]').innerHTML = ic(I.x, 20, 2.2);
+  appEl.querySelector('.nav-btn[data-go="recent"]').innerHTML = ic(I.clock) + '<span>Recent</span>';
+  appEl.querySelector('.nav-btn[data-go="settings"]').innerHTML = ic(I.gear) + '<span>Settings</span>';
+  Array.prototype.forEach.call(appEl.querySelectorAll('.back-bar'), function (b) {
     b.innerHTML = ic(I.back, 20, 2.2) + (b.dataset.go === 'settings' ? 'Back to Settings' : 'Back');
   });
   els.testBtn.innerHTML = ic(I.play, 18, 2.2) + 'Test voice';
@@ -760,8 +768,8 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       : 'For the Ava voice, open this app in Microsoft Edge.';
   }
   function renderSettings() {
-    Array.prototype.forEach.call(document.querySelectorAll('[data-speed]'), function (b) { b.setAttribute('aria-pressed', String(b.dataset.speed === settings.speed)); });
-    Array.prototype.forEach.call(document.querySelectorAll('[data-times]'), function (b) { b.setAttribute('aria-pressed', String(Number(b.dataset.times) === settings.times)); });
+    Array.prototype.forEach.call(appEl.querySelectorAll('[data-speed]'), function (b) { b.setAttribute('aria-pressed', String(b.dataset.speed === settings.speed)); });
+    Array.prototype.forEach.call(appEl.querySelectorAll('[data-times]'), function (b) { b.setAttribute('aria-pressed', String(Number(b.dataset.times) === settings.times)); });
     els.chimeSw.setAttribute('aria-checked', String(settings.chime));
     els.autoPopSw.setAttribute('aria-checked', String(settings.autoPop));
     var ex = state.current || 'A105';
@@ -832,10 +840,13 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     }
     if (firstTap) {
       firstTap = false; audioCtx();
-      if (settings.autoPop && canPop() && !inFrame && !pipWin && !(b && b.dataset.action === 'pop')) popOut();
+      // Pop out after this tap has done its job (moving the app mid-tap would swallow the tap).
+      if (settings.autoPop && canPop() && !inFrame && !pipWin && !(b && b.dataset.action === 'pop')) pendingPop = true;
     }
   });
+  var pendingPop = false;
   function release() {
+    if (pendingPop) { pendingPop = false; setTimeout(function () { if (!pipWin) popOut(); }, 60); }
     var pressed = appEl.querySelectorAll('.is-pressed');
     setTimeout(function () { Array.prototype.forEach.call(pressed, function (b) { b.classList.remove('is-pressed'); }); }, 90);
   }
