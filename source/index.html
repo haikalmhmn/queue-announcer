@@ -161,6 +161,14 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
 .popped h2{margin:0;font-family:var(--display);font-size:22px}
 .popped p{margin:0;color:var(--muted);max-width:30ch;line-height:1.45}
 .popped .ghost-btn{padding:0 20px}
+/* Tucked-away main window: just the logo, a label and the button */
+.popped img{width:56px;height:56px}
+@media (max-height:300px){
+  .popped{gap:8px}
+  .popped img,.popped p{display:none}
+  .popped h2{font-size:15px}
+  .popped .ghost-btn{height:44px;font-size:14px;padding:0 14px}
+}
 
 @media (prefers-reduced-motion: reduce){
   .btn,.track,.knob,.entry{transition:none}
@@ -169,9 +177,10 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
 </style>
 
 <div id="popped" class="popped" hidden>
-  <h2>Running in the floating window</h2>
-  <p>The announcer is open in a small window that stays on top of your other apps.</p>
-  <button type="button" class="btn ghost-btn" id="bringBack">Bring it back here</button>
+  <img src="icons/icon-192.png" alt="" width="56" height="56">
+  <h2>Announcer is floating</h2>
+  <p>It's in a small window that stays on top of your other apps.</p>
+  <button type="button" class="btn ghost-btn" id="bringBack">Bring it back</button>
 </div>
 
 <div id="app">
@@ -334,6 +343,13 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Newest first. Add each new version ON TOP; never delete or edit older entries (they are the history).
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
+    {
+      version: '1.1.0', date: '6 Nov 2026',
+      notes: [
+        'When the floating window opens, the main window shrinks to a small tab in the bottom-left corner',
+        'Closing the floating window puts the main window back where it was'
+      ]
+    },
     {
       version: '1.0.2', date: '6 Nov 2026',
       notes: [
@@ -692,10 +708,12 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       pw.document.body.appendChild(appEl);
       pw.document.addEventListener('keydown', onKey);
       els.popped.hidden = false;
+      tuckMain();
       pw.addEventListener('pagehide', function () {
         els.popped.hidden = true;
         document.body.appendChild(appEl);
         pipWin = null; renderSettings();
+        untuckMain();
       });
       renderSettings();
     }).catch(function () {
@@ -703,6 +721,28 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     });
   }
   $('bringBack').addEventListener('click', function () { if (pipWin) pipWin.close(); });
+
+  // Browsers don't allow a page to minimize its own window. In the installed app we can do the
+  // next best thing: shrink the main window to a small tab in the bottom-left corner while the
+  // floating window is open, and put it back afterwards.
+  var savedWin = null;
+  function isInstalledApp() {
+    try { return window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: window-controls-overlay)').matches; } catch (e) { return false; }
+  }
+  function tuckMain() {
+    if (!isInstalledApp() || savedWin) return;
+    try {
+      savedWin = { x: window.screenX, y: window.screenY, w: window.outerWidth, h: window.outerHeight };
+      var W = 260, H = 170, left = (screen.availLeft || 0), top = (screen.availTop || 0);
+      window.resizeTo(W, H);
+      window.moveTo(left + 8, top + screen.availHeight - H - 8);
+    } catch (e) {}
+  }
+  function untuckMain() {
+    if (!savedWin) return;
+    try { window.resizeTo(savedWin.w, savedWin.h); window.moveTo(savedWin.x, savedWin.y); } catch (e) {}
+    savedWin = null;
+  }
 
   // ---------- updates ----------
   // Loads the new version. The ?v= part makes GitHub serve the fresh page instead of a cached copy.

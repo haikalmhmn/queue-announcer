@@ -30,6 +30,10 @@ Every release, before it goes online:
 
 ---
 
+## 1.1.0 — 6 Nov 2026
+- When the floating window opens, the main window shrinks to a small tab in the bottom-left corner
+- Closing the floating window puts the main window back where it was
+
 ## 1.0.2 — 6 Nov 2026
 - Fixed: "Speaking" could get stuck; it now always clears
 - Shows a message if the voice does not play, instead of waiting forever
