@@ -1,0 +1,940 @@
+<!doctype html>
+<!-- Built by tools/build.py from source/index.html. Edit the source, not this file. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}</style>
+<title>Queue Announcer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#15171C">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: one narrow touch column. Status on top, keypad fills the middle, actions pinned to the bottom. */
+:root{
+  --bg:#15171C; --surface:#23262E; --key:#2F333D; --key-soft:#1E2128; --line:#3A3F4A;
+  --fg:#F5F6F8; --soft-fg:#D5D9E0; --muted:#A3AAB6; --dim:#6B7280;
+  --teal:#00C7B1; --teal-press:#009E8D; --teal-tint:#0F2E2B; --teal-text:#D6F7F3; --teal-sub:#8FE3D9;
+  --red:#F9423A; --red-tint:#3A1A19; --red-text:#FF8A84; --on-accent:#15171C;
+  --display:'Space Grotesk', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --body:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{display:flex;flex-direction:column;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;overflow:hidden;-webkit-user-select:none;user-select:none}
+#app{height:100%;max-height:568px;width:100%;max-width:440px;margin:auto;box-sizing:border-box;padding-block:12px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));position:relative}
+.view{height:100%;display:flex;flex-direction:column;gap:10px;min-height:0}
+svg{flex-shrink:0}
+
+/* Buttons and the pressed signal */
+.btn{border:0;margin:0;font:inherit;color:inherit;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:background-color .25s ease,color .25s ease,border-color .25s ease,transform .12s ease}
+.btn:not(:disabled):active,.btn.is-pressed:not(:disabled){transition:none;background:var(--teal);color:var(--on-accent);border-color:var(--teal);transform:scale(.93)}
+.btn.primary:not(:disabled):active,.btn.primary.is-pressed:not(:disabled),
+.seg .btn[aria-pressed="true"]:active,.seg .btn[aria-pressed="true"].is-pressed{background:var(--teal-press)}
+.btn:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+select:focus,select:focus-visible{outline:none}
+.btn:disabled{cursor:not-allowed}
+
+/* Main: now calling */
+.now{display:flex;align-items:center;gap:8px;min-height:64px;padding:6px 6px 6px 14px;box-sizing:border-box;border-radius:14px;background:var(--surface);flex-shrink:0}
+.now-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.now-top{display:flex;align-items:center;gap:8px;height:18px}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.chip-speaking{font-size:11px;font-weight:700;color:var(--on-accent);background:var(--red);padding:1px 7px;border-radius:999px}
+.now-num{font-family:var(--display);font-size:30px;font-weight:700;line-height:1.15;color:var(--teal);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{width:52px;height:52px;border-radius:12px;background:var(--key);border:1px solid var(--line);display:grid;place-items:center;flex-shrink:0}
+.icon-btn.is-muted{color:var(--red)}
+.icon-btn:disabled{color:var(--dim)}
+
+/* Main: entry */
+.entry{height:60px;flex-shrink:0;border:2px solid var(--line);border-radius:14px;display:flex;align-items:center;padding:0 6px 0 54px;box-sizing:border-box;transition:border-color .2s}
+.entry.flash{border-color:var(--red)}
+.entry-text{flex:1;min-width:0;text-align:center;font-family:var(--display);font-size:34px;font-weight:700;letter-spacing:.1em;white-space:nowrap;overflow:hidden}
+.entry-text.placeholder{font-family:var(--body);font-size:15px;font-weight:400;letter-spacing:0;color:var(--muted)}
+.clear-btn{width:44px;height:44px;border-radius:10px;color:var(--red);display:grid;place-items:center;flex-shrink:0}
+.clear-btn:not(:disabled):active,.clear-btn.is-pressed:not(:disabled){background:var(--red);color:var(--on-accent)}
+
+/* Main: keypad */
+.pad{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;min-height:0}
+.letters{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.krow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.krow.short .key:first-child{grid-column-start:2}
+.digits{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;flex-shrink:0}
+.key{height:44px;border-radius:9px;background:var(--surface);font-family:var(--display);font-size:19px;font-weight:700;color:var(--fg)}
+.digits .key{height:52px;border-radius:10px;background:var(--key);font-size:22px}
+.digits .key.soft{background:var(--key-soft);color:var(--muted);display:grid;place-items:center}
+
+/* Main: actions */
+.actions{display:flex;gap:8px;height:58px;flex-shrink:0}
+.nav-btn{width:68px;border-radius:14px;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600}
+.announce{flex:1;border-radius:14px;background:var(--teal);color:var(--on-accent);font-size:19px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
+.announce:disabled{background:var(--key);color:var(--muted);font-size:16px}
+
+/* Sub-page header */
+.head{display:flex;align-items:center;gap:8px;height:44px;flex-shrink:0}
+.head h1{margin:0;flex:1;padding-left:4px;font-family:var(--display);font-size:20px;font-weight:700}
+.back-bar{height:58px;width:100%;flex-shrink:0;border-radius:14px;background:var(--surface);display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:600}
+.head-right{height:30px;display:flex;align-items:center}
+.today{font-size:13px;color:var(--muted);padding-right:4px}
+.status-pill{display:flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:999px;background:var(--red-tint);color:var(--red-text);font-size:13px;font-weight:600;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--red)}
+
+.scroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior:contain}
+.scroll::-webkit-scrollbar{display:none}
+
+/* Recent */
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.row{display:flex;align-items:center;gap:12px;min-height:60px;padding:0 6px 0 14px;border-radius:12px;background:var(--surface)}
+.row-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.row-num{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row-meta{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.recall{width:104px;height:48px;border-radius:10px;border:1px solid var(--teal);color:var(--teal);font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0}
+.recall:disabled{border-color:var(--line);color:var(--dim)}
+.tag-speaking{width:104px;height:48px;border-radius:10px;background:var(--red);color:var(--on-accent);font-size:14px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
+.empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;color:var(--muted);padding:0 24px}
+.empty strong{color:var(--fg);font-family:var(--display);font-size:18px}
+
+/* Settings */
+.stack{display:flex;flex-direction:column;gap:14px;padding-bottom:4px}
+.field{display:flex;flex-direction:column;gap:6px}
+.label{font-size:13px;font-weight:600;color:var(--muted)}
+.hint{font-size:12px;color:var(--muted);line-height:1.4}
+select{height:48px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;font-size:15px;padding:0 12px;width:100%;min-width:0}
+.seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:4px;border-radius:12px;background:var(--surface)}
+.seg .btn{height:44px;border-radius:9px;color:var(--soft-fg);font-size:14px;font-weight:500}
+.seg .btn[aria-pressed="true"]{background:var(--teal);color:var(--on-accent);font-weight:600}
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;padding:0 4px 0 14px;border-radius:12px;background:var(--surface)}
+.switch{width:60px;height:44px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+.track{width:46px;height:28px;border-radius:999px;background:var(--line);padding:3px;box-sizing:border-box;display:flex;transition:background-color .2s}
+.knob{width:22px;height:22px;border-radius:50%;background:var(--muted);transition:transform .2s,background-color .2s}
+.switch[aria-checked="true"] .track{background:var(--teal)}
+.switch[aria-checked="true"] .knob{transform:translateX(18px);background:var(--bg)}
+select{box-sizing:border-box;transition:border-color .2s ease,background-color .2s ease}
+select:focus,select:active{border-color:var(--teal);box-shadow:inset 0 0 0 1px var(--teal)}
+select.picked{border-color:var(--teal);background:var(--teal-tint)}
+.label-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.vol-val{font-size:13px;font-weight:600;color:var(--teal);font-variant-numeric:tabular-nums}
+.vol-row{display:flex;align-items:center;gap:10px}
+.vol-btn{width:48px;height:48px;border-radius:12px;background:var(--surface);font-size:22px;font-weight:600;flex-shrink:0;line-height:1}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;min-width:0;height:48px;margin:0;background:transparent;cursor:pointer;touch-action:manipulation}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:999px;background:linear-gradient(to right,var(--teal) var(--fill,100%),var(--line) var(--fill,100%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:var(--fg);border:3px solid var(--teal);margin-top:-10px;box-sizing:border-box}
+input[type=range]::-moz-range-track{height:8px;border-radius:999px;background:var(--line)}
+input[type=range]::-moz-range-progress{height:8px;border-radius:999px;background:var(--teal)}
+input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:var(--fg);border:3px solid var(--teal);box-sizing:border-box}
+input[type=range]:focus{outline:none}
+input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:8px}
+.voice-box{min-height:48px;display:flex;align-items:center;padding:0 14px;border-radius:12px;background:var(--surface);font-size:15px}
+.bell-row{display:flex;gap:8px;min-width:0}
+.bell-row select{flex:1}
+.test-btn{height:48px;padding:0 14px;border-radius:12px;border:1px solid var(--teal);color:var(--teal);font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.test-btn:disabled{border-color:var(--line);color:var(--dim)}
+.say-box{display:flex;flex-direction:column;gap:4px;padding:10px 14px;border-radius:12px;background:var(--surface)}
+.say-box b{color:var(--teal);font-weight:600}
+.say-line{font-size:14px;line-height:1.45}
+.outline-btn{height:52px;border-radius:12px;border:1px solid var(--teal);color:var(--teal);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
+.outline-btn:disabled{border-color:var(--line);color:var(--dim)}
+.ghost-btn{height:52px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
+.link-row{min-height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-radius:12px;background:var(--surface);font-size:15px;text-align:left}
+.link-row span{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px}
+
+/* About */
+.about-id{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 0 4px}
+.app-icon{width:96px;height:96px;display:block}
+.about-name{font-family:var(--display);font-size:20px;font-weight:700}
+.about-ver{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.update-card{display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;background:var(--surface)}
+.update-card.ok{background:var(--teal-tint)}
+.update-card.ok .uc-title{color:var(--teal-text)} .update-card.ok .uc-sub{color:var(--teal-sub)} .update-card.ok svg{color:var(--teal)}
+.update-card.warn svg{color:var(--red)}
+.uc-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.uc-title{font-size:15px;font-weight:600}
+.uc-sub{font-size:12px;color:var(--muted)}
+.news{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:12px;background:var(--surface)}
+.news p{margin:0;font-size:14px;line-height:1.45}
+.news ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:14px;line-height:1.45}
+.rel-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.rel-date{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rel + .rel{border-top:1px solid var(--line);padding-top:10px}
+.rel{display:flex;flex-direction:column;gap:6px}
+.foot{text-align:center;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* Toast and pop-out placeholder */
+.toast{position:absolute;left:max(16px, env(safe-area-inset-left, 0px));right:max(16px, env(safe-area-inset-right, 0px));bottom:82px;padding:12px 14px;border-radius:12px;background:var(--key);border:1px solid var(--line);color:var(--fg);font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:5}
+.popped{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));box-sizing:border-box}
+.popped h2{margin:0;font-family:var(--display);font-size:22px}
+.popped p{margin:0;color:var(--muted);max-width:30ch;line-height:1.45}
+.popped .ghost-btn{padding:0 20px}
+
+@media (prefers-reduced-motion: reduce){
+  .btn,.track,.knob,.entry{transition:none}
+  .btn:not(:disabled):active,.btn.is-pressed:not(:disabled){transform:none}
+}
+</style>
+</head>
+<body>
+<div id="popped" class="popped" hidden>
+  <h2>Running in the floating window</h2>
+  <p>The announcer is open in a small window that stays on top of your other apps.</p>
+  <button type="button" class="btn ghost-btn" id="bringBack">Bring it back here</button>
+</div>
+
+<div id="app">
+  <!-- MAIN -->
+  <section class="view" id="view-main" aria-label="Announce">
+    <div class="now">
+      <div class="now-info">
+        <div class="now-top">
+          <span class="eyebrow">Now calling</span>
+          <span class="chip-speaking" id="chipSpeaking" hidden>Speaking</span>
+        </div>
+        <span class="now-num" id="nowNum" aria-live="polite">—</span>
+      </div>
+      <button type="button" class="btn icon-btn" id="repeatBtn" data-action="repeat" aria-label="Repeat last announcement"></button>
+      <button type="button" class="btn icon-btn" id="muteBtn" data-action="mute"></button>
+    </div>
+
+    <div class="entry" id="entry">
+      <div class="entry-text placeholder" id="entryText" role="status" aria-label="Order number being typed">Enter order number</div>
+      <button type="button" class="btn clear-btn" data-action="clear" aria-label="Clear"></button>
+    </div>
+
+    <div class="pad">
+      <div class="letters" id="letters"></div>
+      <div class="digits" id="digits"></div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn nav-btn" data-go="recent"></button>
+      <button type="button" class="btn announce primary" id="announceBtn" data-action="announce"></button>
+      <button type="button" class="btn nav-btn" data-go="settings"></button>
+    </div>
+  </section>
+
+  <!-- RECENT -->
+  <section class="view" id="view-recent" aria-label="Recent" hidden>
+    <div class="head">
+      <h1>Recent</h1>
+      <div class="head-right" role="status">
+        <span class="status-pill" id="callingPill" hidden><span class="dot"></span><span id="callingText"></span></span>
+        <span class="today" id="todayLbl">Today</span>
+      </div>
+    </div>
+    <div class="scroll" id="recentScroll">
+      <ul class="list" id="recentList"></ul>
+      <div class="empty" id="recentEmpty" hidden>
+        <strong>No numbers called yet today</strong>
+        <span>Numbers you announce will show here, each with a Recall button.</span>
+      </div>
+    </div>
+    <button type="button" class="btn back-bar" data-go="main"></button>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="view" id="view-settings" aria-label="Settings" hidden>
+    <div class="head">
+      <h1>Settings</h1>
+    </div>
+    <div class="scroll">
+      <div class="stack">
+        <div class="field">
+          <span class="label">Voice</span>
+          <div class="voice-box"><span id="voiceName">Ava · US English</span></div>
+          <span class="hint" id="voiceHint" hidden></span>
+        </div>
+
+        <div class="field">
+          <div class="label-row"><label class="label" for="volRange">Announcement volume</label><span class="vol-val" id="volVal">100%</span></div>
+          <div class="vol-row">
+            <button type="button" class="btn vol-btn" data-action="vol-down" aria-label="Lower volume">−</button>
+            <input type="range" id="volRange" min="10" max="100" step="10" value="100">
+            <button type="button" class="btn vol-btn" data-action="vol-up" aria-label="Raise volume">+</button>
+          </div>
+          <span class="hint">Only changes this app's sound, not your PC volume.</span>
+        </div>
+
+        <div class="field">
+          <span class="label" id="speedLbl">Speaking speed</span>
+          <div class="seg" role="group" aria-labelledby="speedLbl" id="speedSeg">
+            <button type="button" class="btn" data-speed="slow">Slow</button>
+            <button type="button" class="btn" data-speed="calm">Calm</button>
+            <button type="button" class="btn" data-speed="normal">Normal</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="label" id="timesLbl">Say the number</span>
+          <div class="seg" role="group" aria-labelledby="timesLbl" id="timesSeg">
+            <button type="button" class="btn" data-times="1">Once</button>
+            <button type="button" class="btn" data-times="2">Twice</button>
+            <button type="button" class="btn" data-times="3">3 times</button>
+          </div>
+        </div>
+
+        <div class="switch-row">
+          <span id="chimeLbl">Bell before voice</span>
+          <button type="button" class="btn switch" role="switch" id="chimeSw" data-action="chime" aria-labelledby="chimeLbl"><span class="track"><span class="knob"></span></span></button>
+        </div>
+
+        <div class="field">
+          <label class="label" for="bellSel">Bell sound</label>
+          <div class="bell-row">
+            <select id="bellSel"></select>
+            <button type="button" class="btn test-btn" id="bellTest" data-action="bell-test" aria-label="Test bell sound"></button>
+          </div>
+        </div>
+
+        <div class="say-box">
+          <span class="hint">Announcement, read letter by letter</span>
+          <span class="say-line" id="sayLine"></span>
+        </div>
+
+        <button type="button" class="btn outline-btn" id="testBtn" data-action="test"></button>
+
+        <div class="field">
+          <button type="button" class="btn ghost-btn" id="popBtn" data-action="pop"></button>
+          <div class="switch-row">
+            <span id="autoPopLbl">Float on top at first tap</span>
+            <button type="button" class="btn switch" role="switch" id="autoPopSw" data-action="autopop" aria-labelledby="autoPopLbl"><span class="track"><span class="knob"></span></span></button>
+          </div>
+          <span class="hint">The floating window stays above other apps. Works in Microsoft Edge or Chrome on a computer.</span>
+        </div>
+
+        <button type="button" class="btn link-row" data-go="about">About &amp; version <span><span id="verSmall"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg></span></button>
+      </div>
+    </div>
+    <button type="button" class="btn back-bar" data-go="main"></button>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="view" id="view-about" aria-label="About" hidden>
+    <div class="head">
+      <h1>About</h1>
+    </div>
+    <div class="scroll"><div class="stack">
+    <div class="about-id">
+      <img class="app-icon" src="icons/icon-192.png" alt="Foodle logo" width="96" height="96">
+      <span class="about-name">Queue Announcer</span>
+      <span class="about-ver" id="verBig"></span>
+    </div>
+    <div class="update-card" id="updCard">
+      <span id="updIcon"></span>
+      <div class="uc-text"><span class="uc-title" id="updTitle"></span><span class="uc-sub" id="updSub"></span></div>
+    </div>
+    <button type="button" class="btn ghost-btn" data-action="check" id="checkBtn"></button>
+    <div class="news" id="newsBox"></div>
+    <div class="news" id="historyBox" hidden></div>
+    <span class="foot" id="lastChecked"></span>
+    </div></div>
+    <button type="button" class="btn back-bar" data-go="settings"></button>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  // ---------- release notes ----------
+  // Newest first. Add each new version ON TOP; never delete or edit older entries (they are the history).
+  // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
+  var RELEASES = [
+    {
+      version: '1.0.0', date: '6 Nov 2026',
+      notes: [
+        'Keypad with letters A–Z and numbers 0–9 on one page',
+        'Bell, then Ava reads the code letter by letter',
+        'One call at a time, with Repeat and Mute',
+        'Recent page with a Recall button for every number',
+        'Settings for volume, speed, repeats and bell sound',
+        'Floating window that stays on top of other apps',
+        'Updates load automatically on every PC',
+        'Foodle logo as the app icon'
+      ]
+    }
+  ];
+  var APP_VERSION = RELEASES[0].version;
+  var RATES = { slow: 0.78, calm: 0.88, normal: 1.0 };
+  var CHECK_EVERY_MS = 5 * 60 * 1000;
+
+  // ---------- icons ----------
+  function ic(body, size, sw) {
+    return '<svg width="' + (size || 22) + '" height="' + (size || 22) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (sw || 2) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + body + '</svg>';
+  }
+  var I = {
+    speaker: '<path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path>',
+    speakerFull: '<path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M19 5a10 10 0 0 1 0 14"></path>',
+    muted: '<path d="M11 5 6 9H2v6h4l5 4V5z"></path><line x1="22" y1="9" x2="16" y2="15"></line><line x1="16" y1="9" x2="22" y2="15"></line>',
+    repeat: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path>',
+    clock: '<circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline>',
+    gear: '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path>',
+    back: '<polyline points="15 18 9 12 15 6"></polyline>',
+    x: '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>',
+    del: '<path d="M21 5H9l-6 7 6 7h12V5z"></path><line x1="17" y1="9" x2="12" y2="14"></line><line x1="12" y1="9" x2="17" y2="14"></line>',
+    play: '<polygon points="6 4 20 12 6 20 6 4"></polygon>',
+    pop: '<rect x="3" y="5" width="18" height="14" rx="2"></rect><rect x="12" y="11" width="7" height="6" rx="1"></rect>',
+    check: '<circle cx="12" cy="12" r="10"></circle><polyline points="8 12 11 15 16 9"></polyline>',
+    refresh: '<path d="M21 12a9 9 0 1 1-3-6.7L21 8"></path><path d="M21 3v5h-5"></path>',
+    alert: '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="7" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line>'
+  };
+
+  // ---------- storage ----------
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem('qa:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem('qa:' + k, JSON.stringify(v)); } catch (e) {} }
+  };
+  var settings = Object.assign({ voice: '', speed: 'calm', times: 2, chime: true, bell: 'foodle', volume: 100, muted: false, autoPop: true }, store.get('settings', {}));
+  function saveSettings() { store.set('settings', settings); }
+
+  function todayKey() { return new Date().toDateString(); }
+  var recent = store.get('recent', null);
+  function ensureToday() {
+    if (!recent || recent.day !== todayKey()) { recent = { day: todayKey(), list: [] }; store.set('recent', recent); }
+  }
+  ensureToday();
+
+  // ---------- state ----------
+  var state = {
+    view: 'main', draft: '', speaking: false, speakingNum: null,
+    current: recent.list.length ? recent.list[0].num : '',
+    update: { status: 'idle', remote: null, last: null }, pendingReload: false
+  };
+
+  // ---------- dom ----------
+  var appEl = document.getElementById('app');
+  function $(id) { return document.getElementById(id); }
+  var els = {
+    nowNum: $('nowNum'), chip: $('chipSpeaking'), repeatBtn: $('repeatBtn'), muteBtn: $('muteBtn'),
+    entry: $('entry'), entryText: $('entryText'), announceBtn: $('announceBtn'),
+    letters: $('letters'), digits: $('digits'),
+    callingPill: $('callingPill'), callingText: $('callingText'), todayLbl: $('todayLbl'),
+    recentList: $('recentList'), recentEmpty: $('recentEmpty'),
+    voiceName: $('voiceName'), voiceHint: $('voiceHint'), chimeSw: $('chimeSw'), autoPopSw: $('autoPopSw'),
+    sayLine: $('sayLine'), testBtn: $('testBtn'), popBtn: $('popBtn'),
+    updCard: $('updCard'), updIcon: $('updIcon'), updTitle: $('updTitle'), updSub: $('updSub'),
+    lastChecked: $('lastChecked'), checkBtn: $('checkBtn'), toast: $('toast'), popped: $('popped')
+  };
+
+  // static content
+  els.repeatBtn.innerHTML = ic(I.repeat);
+  document.querySelector('[data-action="clear"]').innerHTML = ic(I.x, 20, 2.2);
+  document.querySelector('.nav-btn[data-go="recent"]').innerHTML = ic(I.clock) + '<span>Recent</span>';
+  document.querySelector('.nav-btn[data-go="settings"]').innerHTML = ic(I.gear) + '<span>Settings</span>';
+  Array.prototype.forEach.call(document.querySelectorAll('.back-bar'), function (b) {
+    b.innerHTML = ic(I.back, 20, 2.2) + (b.dataset.go === 'settings' ? 'Back to Settings' : 'Back');
+  });
+  els.testBtn.innerHTML = ic(I.play, 18, 2.2) + 'Test voice';
+  $('bellTest').innerHTML = ic(I.play, 16, 2.2) + 'Test';
+  els.checkBtn.innerHTML = ic(I.refresh, 18) + 'Check for updates';
+  $('verBig').textContent = 'Version ' + APP_VERSION;
+  $('verSmall').textContent = 'v' + APP_VERSION;
+  (function renderReleases() {
+    function block(r, title) {
+      var d = document.createElement('div'); d.className = 'rel';
+      var h = document.createElement('div'); h.className = 'rel-head';
+      var t = document.createElement('span'); t.className = 'label'; t.textContent = title;
+      var dt = document.createElement('span'); dt.className = 'rel-date'; dt.textContent = r.date;
+      h.appendChild(t); h.appendChild(dt); d.appendChild(h);
+      var ul = document.createElement('ul');
+      r.notes.forEach(function (n) { var li = document.createElement('li'); li.textContent = n; ul.appendChild(li); });
+      d.appendChild(ul);
+      return d;
+    }
+    $('newsBox').appendChild(block(RELEASES[0], "What's new in " + RELEASES[0].version));
+    var older = RELEASES.slice(1);
+    if (older.length) {
+      var hb = $('historyBox'); hb.hidden = false;
+      var ht = document.createElement('span'); ht.className = 'label'; ht.textContent = 'Earlier versions';
+      hb.appendChild(ht);
+      older.forEach(function (r) { hb.appendChild(block(r, 'Version ' + r.version)); });
+    }
+  })();
+
+  // keypad
+  ['ABCDEFG', 'HIJKLMN', 'OPQRSTU', 'VWXYZ'].forEach(function (row) {
+    var r = document.createElement('div'); r.className = 'krow' + (row.length < 7 ? ' short' : '');
+    row.split('').forEach(function (c) { r.appendChild(keyBtn(c, c)); });
+    els.letters.appendChild(r);
+  });
+  '1234567890'.split('').forEach(function (c) { els.digits.appendChild(keyBtn(c, c)); });
+  var dash = keyBtn('-', '–'); dash.setAttribute('aria-label', 'Dash'); els.digits.appendChild(dash);
+  var del = document.createElement('button');
+  del.type = 'button'; del.className = 'btn key soft'; del.dataset.action = 'backspace';
+  del.setAttribute('aria-label', 'Delete last character'); del.innerHTML = ic(I.del, 24);
+  els.digits.appendChild(del);
+  function keyBtn(val, label) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn key'; b.dataset.key = val; b.textContent = label;
+    return b;
+  }
+
+  // ---------- helpers ----------
+  function spelled(num) { return num.replace(/-/g, '').split('').join(', '); }
+  function timeNow() {
+    var d = new Date(), h = d.getHours() % 12 || 12, m = ('0' + d.getMinutes()).slice(-2);
+    return h + ':' + m + (d.getHours() < 12 ? ' AM' : ' PM');
+  }
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  var toastTimer = null;
+  function toast(msg) {
+    els.toast.textContent = msg; els.toast.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { els.toast.hidden = true; }, 3800);
+  }
+  var inFrame = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
+
+  // ---------- voices ----------
+  // The app uses one voice: Ava. If a PC doesn't have Ava, it falls back down this list (Jenny next).
+  // To change the voice for every PC, move a different name to the front.
+  var NATURAL_FEMALE = ['Ava', 'Jenny', 'Aria', 'Emma', 'Michelle', 'Sonia', 'Libby', 'Natasha', 'Clara', 'Luna', 'Emily', 'Molly', 'Leah', 'Neerja', 'Rosa'];
+  var FALLBACK_FEMALE = [/Google UK English Female/i, /Samantha/i, /Zira/i, /Hazel/i, /Susan/i, /Karen/i, /Moira/i, /Tessa/i, /Google US English/i];
+  var REGION = { US: 'US', GB: 'UK', AU: 'Australia', CA: 'Canada', SG: 'Singapore', IE: 'Ireland', NZ: 'New Zealand', ZA: 'South Africa', IN: 'India', PH: 'Philippines' };
+  var voices = [], voicesNatural = false;
+  function naturalRank(v) {
+    if (!/Online|Natural/i.test(v.name)) return -1;
+    for (var i = 0; i < NATURAL_FEMALE.length; i++) if (new RegExp('\\b' + NATURAL_FEMALE[i]).test(v.name)) return i;
+    return -1;
+  }
+  function fallbackRank(v) { for (var i = 0; i < FALLBACK_FEMALE.length; i++) if (FALLBACK_FEMALE[i].test(v.name)) return i; return -1; }
+  function loadVoices() {
+    if (!('speechSynthesis' in window)) return;
+    var en = (speechSynthesis.getVoices() || []).filter(function (v) { return /^en([-_]|$)/i.test(v.lang); });
+    var nat = en.filter(function (v) { return naturalRank(v) >= 0; });
+    if (nat.length) {
+      voicesNatural = true;
+      voices = nat.sort(function (a, b) {
+        return naturalRank(a) - naturalRank(b)
+          || (/Multilingual/i.test(a.name) - /Multilingual/i.test(b.name))
+          || (/en-US/i.test(b.lang) - /en-US/i.test(a.lang));
+      });
+    } else {
+      voicesNatural = false;
+      var fb = en.filter(function (v) { return fallbackRank(v) >= 0; });
+      voices = (fb.length ? fb : en).sort(function (a, b) { return fallbackRank(a) - fallbackRank(b); });
+    }
+    renderVoices();
+  }
+  function pickVoice() { return voices[0] || null; }
+  function voiceLabel(v) {
+    var n = v.name.replace(/^Microsoft\s+/i, '').replace(/\s*\(Natural\)/i, '').replace(/\s+Online/i, '').replace(/\s*-\s*English.*$/i, '');
+    var m = /[-_]([A-Z]{2})$/i.exec(v.lang), r = m ? (REGION[m[1].toUpperCase()] || m[1].toUpperCase()) : '';
+    return r ? n + ' · ' + r + ' English' : n;
+  }
+  if ('speechSynthesis' in window) {
+    loadVoices();
+    if (typeof speechSynthesis.addEventListener === 'function') speechSynthesis.addEventListener('voiceschanged', loadVoices);
+    else speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  // ---------- sound ----------
+  function vol() { return Math.max(0.1, Math.min(1, (settings.volume || 100) / 100)); }
+  var actx = null;
+  function audioCtx() {
+    if (!actx) { var C = window.AudioContext || window.webkitAudioContext; if (C) actx = new C(); }
+    if (actx && actx.state === 'suspended') actx.resume();
+    return actx;
+  }
+  function chime() {
+    var ctx = audioCtx();
+    if (!ctx) return Promise.resolve();
+    var t0 = ctx.currentTime + 0.05;
+    [[659.25, 0], [523.25, 0.42]].forEach(function (n) {
+      [[1, 0.28], [2, 0.06], [3, 0.025]].forEach(function (p) {
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = n[0] * p[0];
+        g.gain.setValueAtTime(0.0001, t0 + n[1]);
+        g.gain.exponentialRampToValueAtTime(p[1] * vol(), t0 + n[1] + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + 1.1);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(t0 + n[1]); o.stop(t0 + n[1] + 1.2);
+      });
+    });
+    return wait(1300);
+  }
+  // ---------- bell sounds ----------
+  // To add a sound: put the file in the "sounds" folder and add one line here.
+  var SOUNDS = [
+    { id: 'foodle', name: 'Foodle bell', file: 'sounds/foodle-bell.wav' },
+    { id: 'classic', name: 'Classic chime' }
+  ];
+  var bufCache = {}, bellTesting = false;
+  function loadBell() {
+    var ok = SOUNDS.some(function (s) { return s.id === settings.bell; });
+    if (!ok) { settings.bell = 'foodle'; saveSettings(); }
+  }
+  function decode(buf) {
+    var ctx = audioCtx();
+    return new Promise(function (res, rej) { ctx.decodeAudioData(buf, res, rej); });
+  }
+  function getBuffer(id) {
+    if (bufCache[id]) return Promise.resolve(bufCache[id]);
+    var s = SOUNDS.filter(function (x) { return x.id === id; })[0];
+    if (!s || !s.file) return Promise.reject(new Error('none'));
+    return fetch(s.file).then(function (r) { if (!r.ok) throw new Error('http'); return r.arrayBuffer(); })
+      .then(decode).then(function (b) { bufCache[id] = b; return b; });
+  }
+  function playBell() {
+    var ctx = audioCtx();
+    if (!ctx) return Promise.resolve();
+    if (settings.bell === 'classic') return chime();
+    return getBuffer(settings.bell).then(function (buffer) {
+      var src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = buffer; g.gain.value = vol(); src.connect(g); g.connect(ctx.destination); src.start();
+      return wait(Math.min(buffer.duration, 8) * 1000 + 200);
+    }).catch(function () {
+      toast("Couldn't play that bell. Using the classic chime.");
+      return chime();
+    });
+  }
+
+  // Speaks two parts back to back. Queuing the second part while the first is speaking
+  // gives a short, natural gap (shorter than a comma, longer than none).
+  function sayParts(a, b) {
+    return new Promise(function (resolve) {
+      var u1 = makeUtter(a), u2 = makeUtter(b), done = false;
+      function fin() { if (!done) { done = true; clearTimeout(t); resolve(); } }
+      var t = setTimeout(fin, 6000 + (a.length + b.length) * 200);
+      u2.onend = fin; u2.onerror = fin;
+      speechSynthesis.speak(u1); speechSynthesis.speak(u2);
+    });
+  }
+  function makeUtter(text) {
+    var u = new SpeechSynthesisUtterance(text), v = pickVoice();
+    if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = 'en-US'; }
+    u.rate = RATES[settings.speed] || 0.88; u.pitch = 1; u.volume = vol();
+    return u;
+  }
+  function say(text) {
+    return new Promise(function (resolve) {
+      var u = new SpeechSynthesisUtterance(text), v = pickVoice(), done = false;
+      if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = 'en-US'; }
+      u.rate = RATES[settings.speed] || 0.88; u.pitch = 1; u.volume = vol();
+      function fin() { if (!done) { done = true; clearTimeout(t); resolve(); } }
+      var t = setTimeout(fin, 5000 + text.length * 200);
+      u.onend = fin; u.onerror = fin;
+      speechSynthesis.speak(u);
+    });
+  }
+  function runSpeech(num) {
+    state.speaking = true; state.speakingNum = num; renderAll();
+    var s = spelled(num);
+    var p = Promise.resolve();
+    try { speechSynthesis.cancel(); } catch (e) {}
+    if (settings.chime) p = p.then(playBell);
+    for (var i = 0; i < settings.times; i++) {
+      (function (i) {
+        p = p.then(function () { return say(i === 0 ? s + '. Please collect your order.' : s + '.'); })
+          .then(function () { if (i < settings.times - 1) return wait(700); });
+      })(i);
+    }
+    return p.catch(function () {}).then(function () {
+      state.speaking = false; state.speakingNum = null; renderAll();
+      if (state.pendingReload && !state.draft) applyUpdate(state.update.remote);
+    });
+  }
+
+  // ---------- calls ----------
+  function logCall(num, isNew) {
+    ensureToday();
+    var list = recent.list, t = timeNow(), idx = -1;
+    for (var i = 0; i < list.length; i++) if (list[i].num === num) { idx = i; break; }
+    if (idx >= 0) {
+      var item = list[idx]; item.times += 1; item.last = t;
+      if (isNew) { list.splice(idx, 1); list.unshift(item); }
+    } else {
+      list.unshift({ num: num, last: t, times: 1 });
+    }
+    recent.list = list.slice(0, 60);
+    store.set('recent', recent);
+  }
+  function call(num, isNew) {
+    if (!num || state.speaking) return;
+    logCall(num, isNew);
+    state.current = num;
+    if (settings.muted) { renderAll(); toast('Sound is off. ' + num + ' was saved but not spoken.'); return; }
+    if (!('speechSynthesis' in window)) { renderAll(); toast("This browser can't speak. Open the app in Microsoft Edge."); return; }
+    runSpeech(num);
+  }
+
+  // ---------- pop-out (always on top) ----------
+  var pipWin = null;
+  function canPop() { return 'documentPictureInPicture' in window; }
+  function popOut() {
+    if (pipWin) { pipWin.close(); return; }
+    if (!canPop()) { toast('Floating window needs Microsoft Edge or Chrome on a computer.'); return; }
+    window.documentPictureInPicture.requestWindow({ width: 400, height: 568 }).then(function (pw) {
+      pipWin = pw;
+      Array.prototype.forEach.call(document.querySelectorAll('style, link[rel="stylesheet"]'), function (n) {
+        pw.document.head.appendChild(n.cloneNode(true));
+      });
+      pw.document.title = 'Queue Announcer';
+      pw.document.documentElement.style.height = '100%';
+      pw.document.body.appendChild(appEl);
+      pw.document.addEventListener('keydown', onKey);
+      els.popped.hidden = false;
+      pw.addEventListener('pagehide', function () {
+        els.popped.hidden = true;
+        document.body.appendChild(appEl);
+        pipWin = null; renderSettings();
+      });
+      renderSettings();
+    }).catch(function () {
+      toast("The floating window isn't available here. It works once the app is installed in Edge.");
+    });
+  }
+  $('bringBack').addEventListener('click', function () { if (pipWin) pipWin.close(); });
+
+  // ---------- updates ----------
+  // Loads the new version. The ?v= part makes GitHub serve the fresh page instead of a cached copy.
+  // It tries each new version once per session, so a slow server can never cause a reload loop.
+  function applyUpdate(v) {
+    try {
+      if (sessionStorage.getItem('qa:tried') === v) return;
+      sessionStorage.setItem('qa:tried', v);
+    } catch (e) {}
+    location.replace(location.pathname + '?v=' + encodeURIComponent(v));
+  }
+  function checkUpdate(manual) {
+    state.update.status = 'checking'; renderAbout();
+    fetch('version.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error('http');
+      return r.json();
+    }).then(function (j) {
+      state.update.last = timeNow();
+      if (j && j.version && j.version !== APP_VERSION) {
+        state.update.status = 'update'; state.update.remote = j.version;
+        if (!state.speaking && !state.draft) { applyUpdate(j.version); return; }
+        state.pendingReload = true;
+      } else {
+        state.update.status = 'ok';
+        if (manual) toast("You're on the latest version.");
+      }
+      renderAbout();
+    }).catch(function () {
+      state.update.status = (location.protocol === 'https:' && !inFrame) ? 'offline' : 'unavailable';
+      renderAbout();
+    });
+  }
+
+  // ---------- render ----------
+  function renderMain() {
+    els.nowNum.textContent = state.current || '—';
+    els.chip.hidden = !state.speaking;
+    if (state.draft) { els.entryText.textContent = state.draft; els.entryText.classList.remove('placeholder'); }
+    else { els.entryText.textContent = 'Enter order number'; els.entryText.classList.add('placeholder'); }
+    els.announceBtn.disabled = state.speaking;
+    els.announceBtn.innerHTML = state.speaking ? 'Speaking… please wait' : ic(I.speaker, 20, 2.2) + 'Announce';
+    els.repeatBtn.disabled = state.speaking || !state.current;
+    els.muteBtn.classList.toggle('is-muted', settings.muted);
+    els.muteBtn.innerHTML = ic(settings.muted ? I.muted : I.speakerFull);
+    els.muteBtn.setAttribute('aria-label', settings.muted ? 'Turn sound on' : 'Mute');
+  }
+  function renderRecent() {
+    els.callingPill.hidden = !state.speaking;
+    els.todayLbl.hidden = state.speaking;
+    els.callingText.textContent = state.speaking ? 'Calling ' + state.speakingNum : '';
+    var list = recent.list;
+    els.recentEmpty.hidden = list.length > 0;
+    els.recentList.hidden = list.length === 0;
+    els.recentList.innerHTML = '';
+    list.forEach(function (it) {
+      var li = document.createElement('li'); li.className = 'row';
+      var info = document.createElement('div'); info.className = 'row-info';
+      var n = document.createElement('span'); n.className = 'row-num'; n.textContent = it.num;
+      var m = document.createElement('span'); m.className = 'row-meta';
+      m.textContent = it.last + (it.times > 1 ? ' · called ' + it.times + 'x' : '');
+      info.appendChild(n); info.appendChild(m); li.appendChild(info);
+      if (state.speaking && state.speakingNum === it.num) {
+        var tag = document.createElement('span'); tag.className = 'tag-speaking'; tag.textContent = 'Speaking';
+        li.appendChild(tag);
+      } else {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'btn recall'; b.dataset.action = 'recall'; b.dataset.num = it.num;
+        b.disabled = state.speaking; b.setAttribute('aria-label', 'Recall ' + it.num);
+        b.innerHTML = ic(I.speaker, 16, 2.2) + 'Recall';
+        li.appendChild(b);
+      }
+      els.recentList.appendChild(li);
+    });
+  }
+  function renderVoices() {
+    var v = pickVoice(), isAva = !!(v && /\bAva/.test(v.name) && /Online|Natural/i.test(v.name));
+    els.voiceName.textContent = v ? voiceLabel(v) : 'Default voice';
+    if (isAva) { els.voiceHint.hidden = true; return; }
+    els.voiceHint.hidden = false;
+    els.voiceHint.textContent = voicesNatural
+      ? "Ava isn't on this PC yet, so a similar voice is used. Updating Microsoft Edge usually adds Ava."
+      : 'For the Ava voice, open this app in Microsoft Edge.';
+  }
+  function renderSettings() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-speed]'), function (b) { b.setAttribute('aria-pressed', String(b.dataset.speed === settings.speed)); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-times]'), function (b) { b.setAttribute('aria-pressed', String(Number(b.dataset.times) === settings.times)); });
+    els.chimeSw.setAttribute('aria-checked', String(settings.chime));
+    els.autoPopSw.setAttribute('aria-checked', String(settings.autoPop));
+    var ex = state.current || 'A105';
+    els.sayLine.innerHTML = '';
+    els.sayLine.appendChild(document.createTextNode('“'));
+    var b = document.createElement('b'); b.textContent = spelled(ex); els.sayLine.appendChild(b);
+    els.sayLine.appendChild(document.createTextNode('. Please collect your order.”'));
+    els.testBtn.disabled = state.speaking;
+    var vr = $('volRange');
+    vr.value = settings.volume;
+    vr.style.setProperty('--fill', ((settings.volume - 10) / 90 * 100) + '%');
+    $('volVal').textContent = settings.volume + '%';
+    var bs = $('bellSel');
+    if (!bs.options.length) {
+      SOUNDS.forEach(function (s) {
+        var o = document.createElement('option'); o.value = s.id;
+        o.textContent = s.name + (s.id === 'foodle' ? ' (default)' : '');
+        bs.appendChild(o);
+      });
+    }
+    bs.value = settings.bell;
+    $('bellTest').disabled = state.speaking || bellTesting;
+    els.popBtn.innerHTML = ic(I.pop, 18) + (pipWin ? 'Return to normal window' : 'Float on top of other apps');
+  }
+  function renderAbout() {
+    var u = state.update, card = els.updCard, title, sub, icon, cls = '';
+    if (u.status === 'checking') { title = 'Checking for updates…'; sub = 'This takes a moment'; icon = I.refresh; }
+    else if (u.status === 'update') { title = 'Updating to version ' + u.remote; sub = 'The app reloads after the current call'; icon = I.refresh; cls = 'ok'; }
+    else if (u.status === 'offline') { title = "Can't reach the update server"; sub = 'Check the internet. It retries every 5 minutes.'; icon = I.alert; cls = 'warn'; }
+    else if (u.status === 'unavailable') { title = 'Update check is off in this preview'; sub = 'It starts working once the app is online'; icon = I.alert; }
+    else { title = "You're up to date"; sub = 'New versions load automatically'; icon = I.check; cls = 'ok'; }
+    card.className = 'update-card' + (cls ? ' ' + cls : '');
+    els.updIcon.innerHTML = ic(icon, 22, 2.2);
+    els.updTitle.textContent = title; els.updSub.textContent = sub;
+    els.checkBtn.disabled = u.status === 'checking';
+    els.lastChecked.textContent = u.last ? 'Last checked: ' + u.last : 'Not checked yet';
+  }
+  function renderAll() { renderMain(); renderRecent(); renderSettings(); renderAbout(); }
+  function show(view) {
+    state.view = view;
+    ['main', 'recent', 'settings', 'about'].forEach(function (v) { $('view-' + v).hidden = v !== view; });
+    if (view === 'about' && state.update.status === 'idle') checkUpdate(false);
+  }
+
+  // ---------- input ----------
+  function typeChar(c) {
+    if (state.draft.length >= 8) { flashEntry(); return; }
+    state.draft += c; renderMain();
+  }
+  function flashEntry() {
+    els.entry.classList.add('flash');
+    setTimeout(function () { els.entry.classList.remove('flash'); }, 350);
+  }
+  function announce() {
+    if (state.speaking) return;
+    var n = state.draft;
+    if (!n) { flashEntry(); return; }
+    state.draft = '';
+    call(n, true);
+  }
+
+  var firstTap = true;
+  appEl.addEventListener('pointerdown', function (e) {
+    var b = e.target.closest('.btn');
+    if (b && !b.disabled) {
+      b.classList.add('is-pressed');
+      if (navigator.vibrate) { try { navigator.vibrate(8); } catch (err) {} }
+    }
+    if (firstTap) {
+      firstTap = false; audioCtx();
+      if (settings.autoPop && canPop() && !inFrame && !pipWin && !(b && b.dataset.action === 'pop')) popOut();
+    }
+  });
+  function release() {
+    var pressed = appEl.querySelectorAll('.is-pressed');
+    setTimeout(function () { Array.prototype.forEach.call(pressed, function (b) { b.classList.remove('is-pressed'); }); }, 90);
+  }
+  appEl.addEventListener('pointerup', release);
+  appEl.addEventListener('pointercancel', release);
+  appEl.addEventListener('pointerleave', release);
+
+  appEl.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b || b.disabled) return;
+    if (b.dataset.key) { typeChar(b.dataset.key); return; }
+    if (b.dataset.go) { show(b.dataset.go); return; }
+    if (b.dataset.speed) { settings.speed = b.dataset.speed; saveSettings(); renderSettings(); return; }
+    if (b.dataset.times) { settings.times = Number(b.dataset.times); saveSettings(); renderSettings(); return; }
+    switch (b.dataset.action) {
+      case 'backspace': state.draft = state.draft.slice(0, -1); renderMain(); break;
+      case 'clear': state.draft = ''; renderMain(); break;
+      case 'announce': announce(); break;
+      case 'repeat': call(state.current, false); break;
+      case 'recall': call(b.dataset.num, false); break;
+      case 'mute':
+        settings.muted = !settings.muted; saveSettings();
+        if (settings.muted && state.speaking) { try { speechSynthesis.cancel(); } catch (err) {} }
+        renderMain(); toast(settings.muted ? 'Sound is off' : 'Sound is on'); break;
+      case 'chime': settings.chime = !settings.chime; saveSettings(); renderSettings(); break;
+      case 'autopop': settings.autoPop = !settings.autoPop; saveSettings(); renderSettings(); break;
+      case 'test':
+        if (state.speaking) return;
+        if (!('speechSynthesis' in window)) { toast("This browser can't speak. Open the app in Microsoft Edge."); return; }
+        runSpeech(state.current || 'A105'); break;
+      case 'vol-down':
+      case 'vol-up':
+        settings.volume = Math.max(10, Math.min(100, settings.volume + (b.dataset.action === 'vol-up' ? 10 : -10)));
+        saveSettings(); renderSettings(); previewVolume(); break;
+      case 'bell-test':
+        if (state.speaking || bellTesting) return;
+        bellTesting = true; renderSettings();
+        playBell().then(function () { bellTesting = false; renderSettings(); });
+        break;
+      case 'pop': popOut(); break;
+      case 'check': checkUpdate(true); break;
+    }
+  });
+  function previewVolume() {
+    if (state.speaking || bellTesting) return;
+    bellTesting = true; renderSettings();
+    playBell().then(function () { bellTesting = false; renderSettings(); });
+  }
+  $('volRange').addEventListener('input', function (e) {
+    settings.volume = Number(e.target.value); saveSettings(); renderSettings();
+  });
+  $('volRange').addEventListener('change', previewVolume);
+  function markPicked(sel) {
+    sel.classList.add('picked');
+    clearTimeout(sel._pt);
+    sel._pt = setTimeout(function () { sel.classList.remove('picked'); }, 900);
+  }
+  $('bellSel').addEventListener('change', function () { settings.bell = $('bellSel').value; saveSettings(); markPicked($('bellSel')); });
+
+  function onKey(e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target && e.target.tagName === 'SELECT') return;
+    if (state.view !== 'main') { if (e.key === 'Escape') show('main'); return; }
+    var k = e.key;
+    if (/^[a-z0-9]$/i.test(k)) { typeChar(k.toUpperCase()); e.preventDefault(); }
+    else if (k === '-') { typeChar('-'); e.preventDefault(); }
+    else if (k === 'Backspace') { state.draft = state.draft.slice(0, -1); renderMain(); e.preventDefault(); }
+    else if (k === 'Escape') { state.draft = ''; renderMain(); }
+    else if (k === 'Enter') { announce(); e.preventDefault(); }
+  }
+  document.addEventListener('keydown', onKey);
+
+  // ---------- installed-app extras (only when hosted) ----------
+  if (!inFrame && location.protocol === 'https:') {
+    [['manifest', 'manifest.webmanifest'], ['apple-touch-icon', 'icons/apple-touch-icon.png']].forEach(function (l) {
+      var el = document.createElement('link'); el.rel = l[0]; el.href = l[1]; document.head.appendChild(el);
+    });
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+    try {
+      if (window.matchMedia('(display-mode: standalone)').matches && window.outerWidth > 520) window.resizeTo(416, 610);
+    } catch (e) {}
+    checkUpdate(false);
+    setInterval(function () { checkUpdate(false); }, CHECK_EVERY_MS);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) checkUpdate(false); });
+  }
+
+  loadBell();
+  renderAll();
+  show('main');
+})();
+</script>
+
+</body>
+</html>
