@@ -30,6 +30,10 @@ Every release, before it goes online:
 
 ---
 
+## 1.1.1 — 6 Nov 2026
+- Main window now shrinks to the bottom-right corner
+- Floating window opens at the top-right corner
+
 ## 1.1.0 — 6 Nov 2026
 - When the floating window opens, the main window shrinks to a small tab in the bottom-left corner
 - Closing the floating window puts the main window back where it was

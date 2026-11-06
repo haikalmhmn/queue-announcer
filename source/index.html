@@ -344,6 +344,13 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
     {
+      version: '1.1.1', date: '6 Nov 2026',
+      notes: [
+        'Main window now shrinks to the bottom-right corner',
+        'Floating window opens at the top-right corner'
+      ]
+    },
+    {
       version: '1.1.0', date: '6 Nov 2026',
       notes: [
         'When the floating window opens, the main window shrinks to a small tab in the bottom-left corner',
@@ -709,6 +716,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       pw.document.addEventListener('keydown', onKey);
       els.popped.hidden = false;
       tuckMain();
+      placeFloating(pw);
       pw.addEventListener('pagehide', function () {
         els.popped.hidden = true;
         document.body.appendChild(appEl);
@@ -723,7 +731,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   $('bringBack').addEventListener('click', function () { if (pipWin) pipWin.close(); });
 
   // Browsers don't allow a page to minimize its own window. In the installed app we can do the
-  // next best thing: shrink the main window to a small tab in the bottom-left corner while the
+  // next best thing: shrink the main window to a small tab in the bottom-right corner while the
   // floating window is open, and put it back afterwards.
   var savedWin = null;
   function isInstalledApp() {
@@ -735,7 +743,15 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       savedWin = { x: window.screenX, y: window.screenY, w: window.outerWidth, h: window.outerHeight };
       var W = 260, H = 170, left = (screen.availLeft || 0), top = (screen.availTop || 0);
       window.resizeTo(W, H);
-      window.moveTo(left + 8, top + screen.availHeight - H - 8);
+      window.moveTo(left + screen.availWidth - W - 8, top + screen.availHeight - H - 8);
+    } catch (e) {}
+  }
+  // Ask for the top-right corner. Edge may ignore this; it then reopens the floating window
+  // wherever it was last dragged to, so dragging it to the top-right once is enough.
+  function placeFloating(pw) {
+    try {
+      var left = (screen.availLeft || 0), top = (screen.availTop || 0);
+      pw.moveTo(left + screen.availWidth - pw.outerWidth - 8, top + 8);
     } catch (e) {}
   }
   function untuckMain() {
