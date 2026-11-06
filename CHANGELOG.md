@@ -30,6 +30,10 @@ Every release, before it goes online:
 
 ---
 
+## 1.1.2 — 6 Nov 2026
+- Floating window tries harder to open at the top-right corner
+- If Edge places it elsewhere, drag it once and it reopens in that spot
+
 ## 1.1.1 — 6 Nov 2026
 - Main window now shrinks to the bottom-right corner
 - Floating window opens at the top-right corner

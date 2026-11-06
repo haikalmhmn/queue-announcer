@@ -344,6 +344,13 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
     {
+      version: '1.1.2', date: '6 Nov 2026',
+      notes: [
+        'Floating window tries harder to open at the top-right corner',
+        'If Edge places it elsewhere, drag it once and it reopens in that spot'
+      ]
+    },
+    {
       version: '1.1.1', date: '6 Nov 2026',
       notes: [
         'Main window now shrinks to the bottom-right corner',
@@ -746,13 +753,27 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       window.moveTo(left + screen.availWidth - W - 8, top + screen.availHeight - H - 8);
     } catch (e) {}
   }
-  // Ask for the top-right corner. Edge may ignore this; it then reopens the floating window
-  // wherever it was last dragged to, so dragging it to the top-right once is enough.
+  // Move the floating window to the top-right corner. Edge positions it itself as it opens, so
+  // try again a few times after it appears. If Edge never allows the move, stop trying for good
+  // so the spot the user drags it to (which Edge remembers) is kept on later opens.
   function placeFloating(pw) {
-    try {
-      var left = (screen.availLeft || 0), top = (screen.availTop || 0);
-      pw.moveTo(left + screen.availWidth - pw.outerWidth - 8, top + 8);
-    } catch (e) {}
+    if (store.get('pipPlace', 'auto') === 'manual') return;
+    var delays = [60, 300, 800], i = 0;
+    function attempt() {
+      if (pw.closed) return;
+      try {
+        var sc = pw.screen || screen, l = sc.availLeft || 0, t = sc.availTop || 0;
+        var tx = l + sc.availWidth - pw.outerWidth - 8, ty = t + 8;
+        pw.moveTo(tx, ty);
+        setTimeout(function () {
+          if (pw.closed) return;
+          if (Math.abs(pw.screenX - tx) < 40 && Math.abs(pw.screenY - ty) < 40) return;
+          if (++i < delays.length) setTimeout(attempt, delays[i]);
+          else store.set('pipPlace', 'manual');
+        }, 150);
+      } catch (e) { store.set('pipPlace', 'manual'); }
+    }
+    setTimeout(attempt, delays[0]);
   }
   function untuckMain() {
     if (!savedWin) return;
