@@ -10,8 +10,12 @@ self.addEventListener('fetch', function (e) {
   var req = e.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
   var isPage = req.mode === 'navigate';
+  // For the page itself, add a unique ?_= so GitHub's cache can't hand back an older version.
+  var net = isPage
+    ? fetch(new URL('./?_=' + Date.now(), self.registration.scope).href, { cache: 'no-store' })
+    : fetch(req, { cache: 'no-store' });
   e.respondWith(
-    fetch(req, { cache: 'no-store' }).then(function (res) {
+    net.then(function (res) {
       if (res && res.ok) {
         var copy = res.clone();
         var key = isPage ? new Request(new URL('./', self.registration.scope)) : req;

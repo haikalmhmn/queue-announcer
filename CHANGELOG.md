@@ -30,6 +30,11 @@ Every release, before it goes online:
 
 ---
 
+## 1.0.2 — 6 Nov 2026
+- Fixed: "Speaking" could get stuck; it now always clears
+- Shows a message if the voice does not play, instead of waiting forever
+- Reopening the app now always loads the newest version straight away
+
 ## 1.0.1 — 6 Nov 2026
 - Fixed: no sound after the app moved into the floating window
 - Fixed: the very first tap was ignored when the window popped out

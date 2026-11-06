@@ -343,6 +343,14 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
     {
+      version: '1.0.2', date: '6 Nov 2026',
+      notes: [
+        'Fixed: "Speaking" could get stuck; it now always clears',
+        'Shows a message if the voice does not play, instead of waiting forever',
+        'Reopening the app now always loads the newest version straight away'
+      ]
+    },
+    {
       version: '1.0.1', date: '6 Nov 2026',
       notes: [
         'Fixed: no sound after the app moved into the floating window',
@@ -596,49 +604,60 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     });
   }
 
-  // Speaks two parts back to back. Queuing the second part while the first is speaking
-  // gives a short, natural gap (shorter than a comma, longer than none).
-  function sayParts(a, b) {
-    return new Promise(function (resolve) {
-      var u1 = makeUtter(a), u2 = makeUtter(b), done = false;
-      function fin() { if (!done) { done = true; clearTimeout(t); resolve(); } }
-      var t = setTimeout(fin, 6000 + (a.length + b.length) * 200);
-      u2.onend = fin; u2.onerror = fin;
-      speechSynthesis.speak(u1); speechSynthesis.speak(u2);
-    });
-  }
+  var liveUtterances = []; // keeps utterances referenced so the browser can't drop them mid-speech
   function makeUtter(text) {
     var u = new SpeechSynthesisUtterance(text), v = pickVoice();
     if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = 'en-US'; }
     u.rate = RATES[settings.speed] || 0.88; u.pitch = 1; u.volume = vol();
     return u;
   }
+  // Resolves true when the voice spoke, false when it failed or never started.
   function say(text) {
     return new Promise(function (resolve) {
-      var u = new SpeechSynthesisUtterance(text), v = pickVoice(), done = false;
-      if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = 'en-US'; }
-      u.rate = RATES[settings.speed] || 0.88; u.pitch = 1; u.volume = vol();
-      function fin() { if (!done) { done = true; clearTimeout(t); resolve(); } }
-      var t = setTimeout(fin, 5000 + text.length * 200);
-      u.onend = fin; u.onerror = fin;
-      speechSynthesis.speak(u);
+      var u = makeUtter(text), done = false, started = false;
+      liveUtterances.push(u);
+      function fin(ok) {
+        if (done) return;
+        done = true; clearTimeout(startT); clearTimeout(endT);
+        liveUtterances.splice(liveUtterances.indexOf(u), 1);
+        resolve(ok);
+      }
+      var startT = setTimeout(function () { if (!started) { try { speechSynthesis.cancel(); } catch (e) {} fin(false); } }, 5000);
+      var endT = setTimeout(function () { fin(started); }, 8000 + text.length * 250);
+      u.onstart = function () { started = true; };
+      u.onend = function () { fin(started || true); };
+      u.onerror = function (e) { fin(!!(e && (e.error === 'interrupted' || e.error === 'canceled'))); };
+      try { speechSynthesis.resume(); speechSynthesis.speak(u); } catch (e) { fin(false); }
     });
   }
+  var watchdog = null;
+  function finishSpeech() {
+    clearTimeout(watchdog);
+    if (!state.speaking) return;
+    state.speaking = false; state.speakingNum = null; renderAll();
+    if (state.pendingReload && !state.draft) applyUpdate(state.update.remote);
+  }
   function runSpeech(num) {
-    state.speaking = true; state.speakingNum = num; renderAll();
-    var s = spelled(num);
+    state.speaking = true; state.speakingNum = num;
+    // Safety net: whatever happens, "Speaking" clears after this long.
+    clearTimeout(watchdog);
+    watchdog = setTimeout(finishSpeech, 10000 + settings.times * 9000);
+    try { renderAll(); } catch (e) {}
+    var s = spelled(num), voiceOk = true;
     var p = Promise.resolve();
     try { speechSynthesis.cancel(); } catch (e) {}
-    if (settings.chime) p = p.then(playBell);
+    if (settings.chime) p = p.then(playBell).catch(function () {});
     for (var i = 0; i < settings.times; i++) {
       (function (i) {
-        p = p.then(function () { return say(i === 0 ? s + '. Please collect your order.' : s + '.'); })
-          .then(function () { if (i < settings.times - 1) return wait(700); });
+        p = p.then(function () {
+          if (!voiceOk) return;
+          return say(i === 0 ? s + '. Please collect your order.' : s + '.').then(function (ok) { if (!ok) voiceOk = false; });
+        }).then(function () { if (voiceOk && i < settings.times - 1) return wait(700); });
       })(i);
     }
-    return p.catch(function () {}).then(function () {
-      state.speaking = false; state.speakingNum = null; renderAll();
-      if (state.pendingReload && !state.draft) applyUpdate(state.update.remote);
+    return p.catch(function () { voiceOk = false; }).then(function () {
+      if (!voiceOk) toast("The voice didn't play. Check that Edge isn't muted, then tap Repeat.");
+      finishSpeech();
     });
   }
 
