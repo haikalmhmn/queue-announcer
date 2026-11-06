@@ -21,7 +21,7 @@ GitHub Pages serves this repository. When a new version is pushed here, every PC
 | `icons/` | App icon in every size (Foodle logo). |
 | `sw.js` | Lets the app keep working offline. |
 | `manifest.webmanifest` | App name and icon for installing on PCs. |
-| `guide/` | Staff guide PDF (written for version 1.2.1). Only updated when the owner asks. |
+| `guide/` | Staff guide PDF, updated with every app release. `guide/source/` holds the HTML and screenshots it is printed from. |
 | `tools/` | `check_version.py`, `build.py`, `prepare_sound.py`. |
 
 ## Releasing a new version

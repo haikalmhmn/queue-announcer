@@ -25,8 +25,9 @@ Every release, before it goes online:
 3. Add the same entry at the top of the list below. Leave every older entry as it is.
 4. Run `python3 tools/check_version.py`. It confirms all three match.
 5. Run `python3 tools/build.py`. It rebuilds the live `index.html`.
-6. Commit and push to `main`. GitHub Pages publishes it in about a minute.
-7. Every PC picks up the new version within about 10 minutes (or when the app is reopened).
+6. Update the staff guide: retake any screenshots that changed, update the text and the "For version X and later" tag in `guide/source/guide.html`, and print it again to `guide/Queue-Announcer-Staff-Guide.pdf`. Keep the footer's "Created" date.
+7. Commit and push to `main`. GitHub Pages publishes it in about a minute.
+8. Every PC picks up the new version within about 10 minutes (or when the app is reopened).
 
 ---
 

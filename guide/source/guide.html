@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Queue Announcer: Staff Guide</title>
+<style>
+@page { size: A4; margin: 0; }
+:root {
+  --ink: #15171C; --soft: #4A5160; --muted: #6B7280; --line: #E3E6EB; --wash: #F4F6F8;
+  --teal: #00A896; --teal-bright: #00C7B1; --teal-tint: #E6F8F5; --red: #F9423A; --red-tint: #FEECEB;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #fff; color: var(--ink); font-family: Inter, 'DejaVu Sans', sans-serif; font-size: 10.5pt; line-height: 1.5; }
+.page { width: 210mm; height: 297mm; padding: 16mm 17mm 14mm; position: relative; page-break-after: always; overflow: hidden; display: flex; flex-direction: column; gap: 5mm; }
+.page:last-child { page-break-after: auto; }
+h1, h2, h3 { font-family: 'Inter Display', Inter, sans-serif; margin: 0; line-height: 1.15; text-wrap: balance; }
+h2 { font-size: 17pt; font-weight: 700; display: flex; align-items: center; gap: 3mm; }
+h2 .n { width: 8mm; height: 8mm; border-radius: 50%; background: var(--teal-bright); color: var(--ink); font-size: 11pt; display: inline-grid; place-items: center; flex-shrink: 0; }
+h3 { font-size: 11.5pt; font-weight: 700; margin-bottom: 1.5mm; }
+p { margin: 0; }
+.lead { color: var(--soft); font-size: 11pt; }
+.foot { position: absolute; left: 17mm; right: 17mm; bottom: 8mm; display: flex; justify-content: space-between; gap: 4mm; font-size: 8pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 2mm; }
+
+/* Cover band */
+.cover { display: flex; align-items: center; gap: 7mm; padding-bottom: 5mm; border-bottom: 2px solid var(--teal-bright); }
+.cover img { width: 30mm; height: 30mm; }
+.cover h1 { font-size: 28pt; font-weight: 800; }
+.cover .sub { color: var(--soft); font-size: 12pt; margin-top: 1.5mm; }
+.tag { display: inline-block; margin-top: 2.5mm; font-size: 8.5pt; font-weight: 600; color: var(--teal); background: var(--teal-tint); padding: 1mm 2.5mm; border-radius: 99px; }
+
+.say { background: var(--wash); border-radius: 3mm; padding: 4mm 5mm; display: flex; flex-direction: column; gap: 1.5mm; }
+.say .line { font-size: 11.5pt; }
+.say b { color: var(--teal); }
+.say .k { font-size: 8.5pt; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+
+ol.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3mm; counter-reset: s; }
+ol.steps > li { counter-increment: s; display: grid; grid-template-columns: 7mm 1fr; gap: 3mm; }
+ol.steps > li::before { content: counter(s); width: 6.5mm; height: 6.5mm; border-radius: 50%; border: 1.5px solid var(--teal); color: var(--teal); font-weight: 700; font-size: 9pt; display: grid; place-items: center; }
+ol.steps b { font-weight: 600; }
+.url { font-family: 'DejaVu Sans Mono', monospace; font-size: 9.5pt; background: var(--wash); padding: .4mm 1.5mm; border-radius: 1mm; white-space: nowrap; }
+
+.split { display: grid; grid-template-columns: 62mm 1fr; gap: 10mm; align-items: start; padding-left: 3mm; }
+.shot { position: relative; width: 62mm; }
+.shot img { width: 100%; display: block; border-radius: 3mm; box-shadow: 0 0 0 1px #2a2d35; }
+.shot .cap { font-size: 8.5pt; color: var(--muted); margin-top: 4mm; text-align: center; }
+.pin { position: absolute; width: 5.6mm; height: 5.6mm; margin: -2.8mm 0 0 -2.8mm; border-radius: 50%; background: var(--red); color: #fff; font-weight: 700; font-size: 8pt; display: grid; place-items: center; box-shadow: 0 0 0 1.2px #fff; }
+
+.legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2.4mm; }
+.legend li { display: grid; grid-template-columns: 6mm 1fr; gap: 2.5mm; align-items: start; }
+.legend .dot { width: 5.6mm; height: 5.6mm; border-radius: 50%; background: var(--red); color: #fff; font-weight: 700; font-size: 8pt; display: grid; place-items: center; }
+.legend b { font-weight: 600; }
+
+.note { border-radius: 3mm; padding: 3.5mm 4.5mm; background: var(--teal-tint); font-size: 10pt; }
+.note.warn { background: var(--red-tint); }
+.note b { font-weight: 700; }
+
+table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+th, td { text-align: left; vertical-align: top; padding: 2.2mm 2.5mm; border-bottom: 1px solid var(--line); }
+th { font-size: 8.5pt; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+td:first-child { font-weight: 600; white-space: nowrap; width: 1%; }
+
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 7mm; align-items: start; }
+.pair { display: grid; grid-template-columns: 52mm 52mm; gap: 10mm; justify-content: center; }
+.pair .shot { width: 100%; }
+kbd { font-family: Inter, sans-serif; font-size: 8.5pt; font-weight: 600; border: 1px solid #C9CED6; border-bottom-width: 2px; border-radius: 1.2mm; padding: 0 1.4mm; background: #fff; }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<section class="page">
+  <div class="cover">
+    <img src="logo-big.png" alt="Foodle logo">
+    <div>
+      <h1>Queue Announcer</h1>
+      <p class="sub">Staff guide: how to call out orders at the counter</p>
+      <span class="tag">For version 1.2.1 and later</span>
+    </div>
+  </div>
+
+  <div>
+    <h3>What it does</h3>
+    <p class="lead">You key in the order code from the receipt. The app rings the Foodle bell, then a clear voice reads the code one character at a time, so customers know their food is ready.</p>
+  </div>
+
+  <div class="say">
+    <span class="k">What customers hear</span>
+    <span class="line"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00A896" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg> <i style="color:#6B7280">bell</i>, <b>“A, 1, 0, 5.</b> Please collect your order.”</span>
+    <span class="line"><b>“Once again, A, 1, 0, 5.”</b></span>
+  </div>
+
+  <div>
+    <h3>Before you start</h3>
+    <ol class="steps">
+      <li><span>Use a computer with <b>Microsoft Edge</b>. Edge has the natural voice (Ava) the app is built for.</span></li>
+      <li><span>Make sure the speakers are on and loud enough to be heard at the counter.</span></li>
+      <li><span>The app needs the internet to start. If the internet drops later, it keeps working.</span></li>
+    </ol>
+  </div>
+
+  <div>
+    <h2><span class="n">1</span>Install it on a PC (one time)</h2>
+  </div>
+  <ol class="steps">
+    <li><span>Open Edge and go to <span class="url">https://haikalmhmn.github.io/queue-announcer/</span></span></li>
+    <li><span>Click the <b>⋯</b> menu at the top right, then <b>Apps</b>, then <b>Install this site as an app</b>.</span></li>
+    <li><span>Click <b>Install</b>. A <b>Queue Announcer</b> icon with the Foodle logo appears on the desktop and Start menu.</span></li>
+    <li><span>From now on, open the app from that icon. You don't need to open Edge first.</span></li>
+  </ol>
+
+  <div class="note"><b>Updates are automatic.</b> When the app is improved, every PC gets the new version by itself within about 10 minutes. Nobody needs to reinstall anything.</div>
+
+  <div class="foot"><span>Queue Announcer · Staff guide</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>1</span></div>
+</section>
+
+<!-- PAGE 2 -->
+<section class="page">
+  <h2><span class="n">2</span>Announce an order</h2>
+
+  <div class="split">
+    <div class="shot">
+      <div style="position:relative"><img src="main.png" alt="Main screen">
+      <span class="pin" style="left:-4%;top:8%">1</span>
+      <span class="pin" style="left:73%;top:0%">2</span>
+      <span class="pin" style="left:88%;top:0%">3</span>
+      <span class="pin" style="left:-4%;top:21%">4</span>
+      <span class="pin" style="left:104%;top:21%">5</span>
+      <span class="pin" style="left:-4%;top:44%">6</span>
+      <span class="pin" style="left:-4%;top:76%">7</span>
+      <span class="pin" style="left:12%;top:100%">8</span>
+      <span class="pin" style="left:50%;top:100%">9</span>
+      <span class="pin" style="left:88%;top:100%">10</span>
+      </div>
+      <p class="cap">Main screen</p>
+    </div>
+    <ul class="legend">
+      <li><span class="dot">1</span><span><b>Now calling</b>: the last order announced.</span></li>
+      <li><span class="dot">2</span><span><b>Repeat</b>: say the last order again.</span></li>
+      <li><span class="dot">3</span><span><b>Mute</b>: turns all sound off (the icon turns red). Tap again to turn sound back on.</span></li>
+      <li><span class="dot">4</span><span><b>Code display</b>: shows what you're typing.</span></li>
+      <li><span class="dot">5</span><span><b>✕ Clear</b>: wipes the whole code.</span></li>
+      <li><span class="dot">6</span><span><b>Letters</b> A to Z.</span></li>
+      <li><span class="dot">7</span><span><b>Numbers</b> 0 to 9, the dash <b>–</b>, and <b>⌫</b> to delete the last character.</span></li>
+      <li><span class="dot">8</span><span><b>Recent</b>: today's called orders, to call one again.</span></li>
+      <li><span class="dot">9</span><span><b>Announce</b>: calls out the code.</span></li>
+      <li><span class="dot">10</span><span><b>Settings</b>: sound and app options.</span></li>
+    </ul>
+  </div>
+
+  <div>
+    <h3>Calling an order</h3>
+    <ol class="steps">
+      <li><span>Tap the code from the receipt, for example <b>A 1 0 5</b>. Codes can be up to 8 characters.</span></li>
+      <li><span>Tap <b>Announce</b>. The bell rings, then the code is read out twice.</span></li>
+      <li><span>Made a mistake? Tap <b>⌫</b> to remove the last character, or <b>✕</b> to start over.</span></li>
+    </ol>
+  </div>
+
+  <div class="two">
+    <div class="note"><b>One call at a time.</b> While a code is being read, the button shows <b>Speaking… please wait</b>. You can already type the next code; tap Announce when it turns teal again.</div>
+    <div class="note"><b>Using a keyboard?</b> Type the code, press <kbd>Enter</kbd> to announce, <kbd>Backspace</kbd> to delete, and <kbd>Esc</kbd> to clear.</div>
+  </div>
+
+  <div class="foot"><span>Queue Announcer · Staff guide</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>2</span></div>
+</section>
+
+<!-- PAGE 3 -->
+<section class="page">
+  <h2><span class="n">3</span>Call an order again (Recent)</h2>
+  <div class="split">
+    <div class="shot">
+      <img src="recent.png" alt="Recent screen">
+      <p class="cap">Recent screen</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4mm">
+      <p>Tap <b>Recent</b> at the bottom left of the main screen. It lists every order called today on this PC, newest first, with the time and how many times it was called.</p>
+      <ol class="steps">
+        <li><span>Find the order and tap its <b>Recall</b> button. The bell and voice play again.</span></li>
+        <li><span>While an order is being read, a red <b>Calling …</b> tag shows at the top and the other Recall buttons wait.</span></li>
+        <li><span>Tap <b>Back</b> at the bottom to return to the keypad.</span></li>
+      </ol>
+      <p class="lead" style="font-size:10pt">The list starts fresh each day. Swipe up and down to see older orders.</p>
+    </div>
+  </div>
+
+  <h2><span class="n">4</span>The floating window</h2>
+  <p>The first time you tap the app after opening it, the announcer moves into a <b>small floating window that stays on top of other apps</b>. You can use the PC for other work and the keypad is always within reach.</p>
+  <ol class="steps">
+    <li><span>The main app window shrinks to a small tab in the <b>bottom-right corner</b> showing <b>Announcer is floating</b>.</span></li>
+    <li><span>Drag the floating window to wherever suits you, for example the <b>top-right corner</b>. Edge remembers the spot next time.</span></li>
+    <li><span>To bring the announcer back into the main window, tap <b>Bring it back</b> on the small tab, or close the floating window.</span></li>
+  </ol>
+  <div class="note warn"><b>Don't close the small tab.</b> The floating window belongs to it, so closing it also closes the announcer. You can minimize it with the <b>–</b> button instead.</div>
+
+  <div class="foot"><span>Queue Announcer · Staff guide</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>3</span></div>
+</section>
+
+<!-- PAGE 4 -->
+<section class="page">
+  <h2><span class="n">5</span>Settings</h2>
+  <div class="pair">
+    <div class="shot"><img src="settings.png" alt="Settings, top"><p class="cap">Settings (top)</p></div>
+    <div class="shot"><img src="settings2.png" alt="Settings, bottom"><p class="cap">Settings (scroll down)</p></div>
+  </div>
+  <table>
+    <tr><th>Setting</th><th>What it does</th></tr>
+    <tr><td>Voice</td><td>Shows the voice in use (Ava). If a PC doesn't have Ava, a similar voice is used and a note suggests updating Edge.</td></tr>
+    <tr><td>Announcement volume</td><td>Makes the bell and voice louder or softer for this app only, not for the whole PC. Use <b>−</b> and <b>+</b>.</td></tr>
+    <tr><td>Speaking speed</td><td>Slow, Calm or Normal for the words. The order code is always read at the same steady pace.</td></tr>
+    <tr><td>Say the number</td><td>Once, Twice or 3 times.</td></tr>
+    <tr><td>Bell before voice</td><td>Turns the bell on or off. <b>Bell sound</b> picks which bell; tap <b>Test</b> to hear it.</td></tr>
+    <tr><td>Test voice</td><td>Plays the full announcement so you can check the sound.</td></tr>
+    <tr><td>Float on top</td><td>Opens the floating window by hand. The switch below it controls whether it opens by itself at the first tap.</td></tr>
+    <tr><td>About &amp; version</td><td>Shows the version, whether it's up to date, and what changed in each version.</td></tr>
+  </table>
+  <p class="lead" style="font-size:9.5pt">Each PC remembers its own settings, so a busy counter can be louder than a quiet one.</p>
+
+  <div class="foot"><span>Queue Announcer · Staff guide</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>4</span></div>
+</section>
+
+<!-- PAGE 5 -->
+<section class="page">
+  <h2><span class="n">6</span>If something goes wrong</h2>
+  <table>
+    <tr><th>Problem</th><th>Try this</th></tr>
+    <tr><td>No sound at all</td><td>Check the <b>Mute</b> icon on the main screen isn't red. Check <b>Settings → Announcement volume</b>. In Windows, right-click the speaker icon, open <b>Volume mixer</b>, and make sure <b>Edge</b> isn't muted.</td></tr>
+    <tr><td>“The voice didn't play”</td><td>The bell worked but the voice didn't start. Check Edge isn't muted, then tap <b>Repeat</b>. If it keeps happening, check the internet connection.</td></tr>
+    <tr><td>Voice sounds robotic</td><td>The app isn't running in Edge, or Edge is out of date. Open it from the Queue Announcer icon and update Edge.</td></tr>
+    <tr><td>No floating window</td><td>It only works in Edge (or Chrome) on a computer. Open <b>Settings → Float on top of other apps</b>.</td></tr>
+    <tr><td>Announcer disappeared</td><td>The small tab was probably closed. Open the app again from its desktop icon.</td></tr>
+    <tr><td>Want the latest version now</td><td>Close the app completely and open it again. Check <b>Settings → About &amp; version</b>.</td></tr>
+  </table>
+
+  <div class="split" style="grid-template-columns: 62mm 1fr; margin-top:2mm">
+    <div class="shot"><img src="about.png" alt="About screen"><p class="cap">About &amp; version</p></div>
+    <div style="display:flex;flex-direction:column;gap:4mm">
+      <h3>Which version am I on?</h3>
+      <p>Go to <b>Settings → About &amp; version</b>. It shows the version number, whether the app is up to date, and a list of what changed. Older versions stay listed underneath, so you can always see the history.</p>
+      <h3>Quick reference</h3>
+      <table>
+        <tr><td>Call an order</td><td>Type code → <b>Announce</b></td></tr>
+        <tr><td>Say it again</td><td><b>Repeat</b> (top) or <b>Recent → Recall</b></td></tr>
+        <tr><td>Silence</td><td><b>Mute</b> (top right)</td></tr>
+        <tr><td>Fix typing</td><td><b>⌫</b> last character, <b>✕</b> all</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="foot"><span>Queue Announcer · Staff guide</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>5</span></div>
+</section>
+
+</body>
+</html>
