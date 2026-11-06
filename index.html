@@ -297,14 +297,14 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
         </div>
 
         <div class="field">
-          <label class="label" for="msgSel">Message</label>
-          <select id="msgSel"></select>
+          <span class="label">Announcement</span>
           <div class="say-box">
             <span class="hint">First time</span>
             <span class="say-line" id="sayLine"></span>
             <span class="hint">Repeat</span>
             <span class="say-line" id="sayAgain"></span>
           </div>
+          <span class="hint">The order code is always read one character at a time, at a steady pace.</span>
         </div>
 
         <button type="button" class="btn outline-btn" id="testBtn" data-action="test"></button>
@@ -357,6 +357,14 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Newest first. Add each new version ON TOP; never delete or edit older entries (they are the history).
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
+    {
+      version: '1.2.1', date: '6 Nov 2026',
+      notes: [
+        'Back to the calm announcement: "A, 1, 0, 5. Please collect your order."',
+        'The order code is always read one character at a time, at a steady pace',
+        'Shorter gap between the bell and the order code'
+      ]
+    },
     {
       version: '1.2.0', date: '6 Nov 2026',
       notes: [
@@ -448,7 +456,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     get: function (k, d) { try { var v = localStorage.getItem('qa:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
     set: function (k, v) { try { localStorage.setItem('qa:' + k, JSON.stringify(v)); } catch (e) {} }
   };
-  var settings = Object.assign({ voice: '', speed: 'calm', times: 2, chime: true, bell: 'foodle', volume: 100, message: 'yay', muted: false, autoPop: true }, store.get('settings', {}));
+  var settings = Object.assign({ voice: '', speed: 'calm', times: 2, chime: true, bell: 'foodle', volume: 100, muted: false, autoPop: true }, store.get('settings', {}));
   function saveSettings() { store.set('settings', settings); }
 
   function todayKey() { return new Date().toDateString(); }
@@ -644,29 +652,20 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     if (settings.bell === 'classic') return chime();
     return getBuffer(settings.bell).then(function (buffer) {
       var src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = buffer; g.gain.value = vol(); src.connect(g); g.connect(ctx.destination); src.start();
-      return wait(Math.min(buffer.duration, 8) * 1000 + 300);
+      return wait(Math.min(buffer.duration, 8) * 1000 + 80);
     }).catch(function () {
       toast("Couldn't play that bell. Using the classic chime.");
       return chime();
     });
   }
 
-  // ---------- messages ----------
-  // {code} is replaced by the code read letter by letter. The code is read a little slower than
-  // the rest so letters and numbers are easy to catch.
-  var MESSAGES = [
-    { id: 'yay', name: 'Yay, your food is ready! (default)', first: 'Yay! {code}, your food is ready! Come and grab it at the counter.', again: '{code}, your food is waiting for you!' },
-    { id: 'feast', name: 'Your Foodle feast is ready', first: 'Good news, {code}! Your Foodle feast is ready. Come on over!', again: 'Hey {code}, your feast is ready!' },
-    { id: 'hot', name: 'Hot and ready', first: '{code}, it\'s hot and ready for you! See you at the counter.', again: 'Once more, {code}, your food is ready!' },
-    { id: 'collect', name: 'Please collect your order (calm)', first: '{code}. Please collect your order.', again: 'Once again, {code}.' }
-  ];
-  // The words are spoken a touch brighter (higher pitch) than the code, which stays clear and level.
-  var WORD_PITCH = 1.08;
-  var CODE_RATE = 0.9; // the code is read at 90% of the chosen speed
-  function currentMessage() {
-    for (var i = 0; i < MESSAGES.length; i++) if (MESSAGES[i].id === settings.message) return MESSAGES[i];
-    return MESSAGES[0];
-  }
+  // ---------- message ----------
+  // {code} is replaced by the code, one character at a time ("A, 1, 0, 5").
+  var MESSAGE = { first: '{code}. Please collect your order.', again: 'Once again, {code}.' };
+  // The code is always read at this fixed speed, whatever the Speaking speed setting:
+  // steady enough to follow each character, never rushed and never dragged.
+  var CODE_RATE = 0.85;
+  function currentMessage() { return MESSAGE; }
   // Splits a message into spoken parts: the code (slower) and the words around it.
   function messageParts(template, code) {
     var i = template.indexOf('{code}'), before = template.slice(0, i).trim(), after = template.slice(i + 6);
@@ -682,7 +681,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   function makeUtter(text, slow) {
     var u = new SpeechSynthesisUtterance(text), v = pickVoice();
     if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = 'en-US'; }
-    u.rate = (RATES[settings.speed] || 0.88) * (slow ? CODE_RATE : 1); u.pitch = slow ? 1 : WORD_PITCH; u.volume = vol();
+    u.rate = slow ? CODE_RATE : (RATES[settings.speed] || 0.88); u.pitch = 1; u.volume = vol();
     return u;
   }
   // Speaks the parts back to back (queued together, so the joins sound natural).
@@ -935,11 +934,6 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       var b = document.createElement('b'); b.textContent = spelled(ex); el.appendChild(b);
       el.appendChild(document.createTextNode(tpl.slice(i + 6) + '”'));
     });
-    var ms = $('msgSel');
-    if (!ms.options.length) MESSAGES.forEach(function (m) {
-      var o = document.createElement('option'); o.value = m.id; o.textContent = m.name; ms.appendChild(o);
-    });
-    ms.value = msg.id;
     els.testBtn.disabled = state.speaking;
     var vr = $('volRange');
     vr.value = settings.volume;
@@ -1067,7 +1061,6 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     clearTimeout(sel._pt);
     sel._pt = setTimeout(function () { sel.classList.remove('picked'); }, 900);
   }
-  $('msgSel').addEventListener('change', function () { settings.message = $('msgSel').value; saveSettings(); renderSettings(); markPicked($('msgSel')); });
   $('bellSel').addEventListener('change', function () { settings.bell = $('bellSel').value; saveSettings(); markPicked($('bellSel')); });
 
   function onKey(e) {

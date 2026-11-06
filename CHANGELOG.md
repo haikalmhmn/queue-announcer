@@ -30,6 +30,11 @@ Every release, before it goes online:
 
 ---
 
+## 1.2.1 — 6 Nov 2026
+- Back to the calm announcement: "A, 1, 0, 5. Please collect your order."
+- The order code is always read one character at a time, at a steady pace
+- Shorter gap between the bell and the order code
+
 ## 1.2.0 — 6 Nov 2026
 - New, more exciting announcements: "Yay! A, 1, 0, 5, your food is ready! Come and grab it at the counter."
 - New Message setting: choose from 4 announcements (the calm original is still there)
