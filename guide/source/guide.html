@@ -44,7 +44,11 @@ svg.i { width: 7mm; height: 7mm; stroke: currentColor; fill: none; stroke-width:
 .intro-list li { display: grid; grid-template-columns: 7mm 1fr; gap: 2.5mm; align-items: center; font-size: 11pt; }
 .intro-list svg { color: var(--teal); width: 6mm; height: 6mm; }
 .toc { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.toc li { display: grid; grid-template-columns: 9mm auto 1fr auto; gap: 3mm; align-items: center; padding: 3.2mm 0; border-bottom: 1px solid var(--line); }
+.toc li { border-bottom: 1px solid var(--line); }
+.toc a { display: grid; grid-template-columns: 9mm auto 1fr auto; gap: 3mm; align-items: center; padding: 4.5mm 0; color: inherit; text-decoration: none; }
+.toc .t { font-size: 13pt; }
+.toc .t small { font-size: 9.5pt; }
+.foot a { color: var(--teal); text-decoration: none; font-weight: 600; }
 .toc .n { width: 7mm; height: 7mm; border-radius: 50%; background: var(--teal-bright); color: var(--ink); font-weight: 700; font-size: 9.5pt; display: grid; place-items: center; }
 .toc .t { font-weight: 600; font-size: 11.5pt; }
 .toc .t small { display: block; font-weight: 400; color: var(--muted); font-size: 9pt; }
@@ -175,22 +179,28 @@ kbd { font-family: Inter, sans-serif; font-size: 8.3pt; font-weight: 600; border
     <li><svg class="i"><use href="#refresh"/></svg><span><b>Version:</b> written for Queue Announcer <b>1.2.1</b>.</span></li>
   </ul>
 
-  <h2 style="font-size:15pt">Contents</h2>
-  <ul class="toc">
-    <li><span class="n">1</span><span class="t">Install<small>What you need and how to put it on a PC</small></span><span class="dots"></span><span class="pg">2</span></li>
-    <li><span class="n">2</span><span class="t">Announce an order<small>Type, announce, and what each button does</small></span><span class="dots"></span><span class="pg">3</span></li>
-    <li><span class="n">3</span><span class="t">Call again from Recent<small>Recall an order that was already called</small></span><span class="dots"></span><span class="pg">4</span></li>
-    <li><span class="n">4</span><span class="t">Floating window<small>Keeping the announcer on top of other apps</small></span><span class="dots"></span><span class="pg">4</span></li>
-    <li><span class="n">5</span><span class="t">Settings<small>Volume, speed, bell and more</small></span><span class="dots"></span><span class="pg">5</span></li>
-    <li><span class="n">6</span><span class="t">Quick fixes<small>What to do when something goes wrong</small></span><span class="dots"></span><span class="pg">6</span></li>
-  </ul>
 
   <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>1</span></div>
 </section>
 
+<!-- CONTENTS -->
+<section class="page" id="contents">
+  <h2 style="font-size:20pt">Contents</h2>
+  <p class="intro" style="font-size:10.5pt;color:var(--soft)">Tap or click a section to jump straight to it. Every page has a <b>Contents</b> link at the bottom to come back here.</p>
+  <ul class="toc">
+    <li><a href="#install"><span class="n">1</span><span class="t">Install<small>What you need and how to put it on a PC</small></span><span class="dots"></span><span class="pg">3</span></a></li>
+    <li><a href="#announce"><span class="n">2</span><span class="t">Announce an order<small>Type, announce, and what each button does</small></span><span class="dots"></span><span class="pg">4</span></a></li>
+    <li><a href="#recent"><span class="n">3</span><span class="t">Call again from Recent<small>Recall an order that was already called</small></span><span class="dots"></span><span class="pg">5</span></a></li>
+    <li><a href="#floating"><span class="n">4</span><span class="t">Floating window<small>Keeping the announcer on top of other apps</small></span><span class="dots"></span><span class="pg">5</span></a></li>
+    <li><a href="#settings"><span class="n">5</span><span class="t">Settings<small>Volume, speed, bell and more</small></span><span class="dots"></span><span class="pg">6</span></a></li>
+    <li><a href="#fixes"><span class="n">6</span><span class="t">Quick fixes<small>What to do when something goes wrong</small></span><span class="dots"></span><span class="pg">7</span></a></li>
+  </ul>
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>2</span></div>
+</section>
+
 <!-- PAGE 2 -->
 <section class="page">
-  <h2><span class="n">1</span>Install</h2>
+  <h2 id="install"><span class="n">1</span>Install</h2>
   <h3 style="font-size:13pt">You need</h3>
   <div class="tiles big">
     <div class="tile"><div class="ib"><svg class="i"><use href="#monitor"/></svg></div><h3>Microsoft Edge</h3><p>On a computer, for the Ava voice.</p></div>
@@ -221,12 +231,12 @@ kbd { font-family: Inter, sans-serif; font-size: 8.3pt; font-weight: 600; border
 
   <div class="tip"><svg class="i"><use href="#refresh"/></svg><span><b>Updates install themselves.</b> No need to reinstall.</span></div>
 
-  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>2</span></div>
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span><a href="#contents">Contents</a> · 3</span></div>
 </section>
 
 <!-- PAGE 2 -->
 <section class="page">
-  <h2><span class="n">2</span>Announce an order</h2>
+  <h2 id="announce"><span class="n">2</span>Announce an order</h2>
 
   <div class="flow three big">
     <div class="card">
@@ -282,12 +292,12 @@ kbd { font-family: Inter, sans-serif; font-size: 8.3pt; font-weight: 600; border
     <div class="tip"><svg class="i"><use href="#keyboard"/></svg><span>Keyboard: <kbd>Enter</kbd> announce, <kbd>Esc</kbd> clear.</span></div>
   </div>
 
-  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>3</span></div>
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span><a href="#contents">Contents</a> · 4</span></div>
 </section>
 
 <!-- PAGE 3 -->
 <section class="page">
-  <h2><span class="n">3</span>Call again from Recent</h2>
+  <h2 id="recent"><span class="n">3</span>Call again from Recent</h2>
   <div class="shotrow">
     <div class="shot">
       <div class="frame">
@@ -305,7 +315,7 @@ kbd { font-family: Inter, sans-serif; font-size: 8.3pt; font-weight: 600; border
     </ul>
   </div>
 
-  <h2><span class="n">4</span>Floating window</h2>
+  <h2 id="floating"><span class="n">4</span>Floating window</h2>
   <div class="diagram">
     <div class="monitor">
       <div class="other">Your other work<i></i><i style="width:80%"></i><i style="width:60%"></i></div>
@@ -323,12 +333,12 @@ kbd { font-family: Inter, sans-serif; font-size: 8.3pt; font-weight: 600; border
   </div>
   <div class="tip warn"><svg class="i"><use href="#x"/></svg><span><b>Don't close the small tab</b>: it closes the announcer too. Minimize it with <b>–</b> instead.</span></div>
 
-  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>4</span></div>
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span><a href="#contents">Contents</a> · 5</span></div>
 </section>
 
 <!-- PAGE 4 -->
 <section class="page">
-  <h2><span class="n">5</span>Settings</h2>
+  <h2 id="settings"><span class="n">5</span>Settings</h2>
   <div style="display:grid;grid-template-columns:58mm 58mm;gap:16mm;justify-content:center;padding-top:2mm">
     <div class="shot"><div class="frame">
       <img src="settings.png" alt="Settings, top">
@@ -365,12 +375,12 @@ kbd { font-family: Inter, sans-serif; font-size: 8.3pt; font-weight: 600; border
   </div>
   <div class="tip"><svg class="i"><use href="#info"/></svg><span>Each PC keeps its own settings. The code is always read at the same steady pace.</span></div>
 
-  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>5</span></div>
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span><a href="#contents">Contents</a> · 6</span></div>
 </section>
 
 <!-- PAGE 5 -->
 <section class="page">
-  <h2><span class="n">6</span>Quick fixes</h2>
+  <h2 id="fixes"><span class="n">6</span>Quick fixes</h2>
   <div class="fixes">
     <div class="fix"><div class="ib"><svg class="i"><use href="#muted"/></svg></div><div><h3>No sound</h3><p>Mute not red? Volume up in Settings? Edge not muted in Windows <b>Volume mixer</b>?</p></div></div>
     <div class="fix"><div class="ib"><svg class="i"><use href="#bell"/></svg></div><div><h3>Bell plays, no voice</h3><p>Check Edge isn't muted, then tap <b>Repeat</b>. Check the internet.</p></div></div>
@@ -404,7 +414,7 @@ kbd { font-family: Inter, sans-serif; font-size: 8.3pt; font-weight: 600; border
     <div class="q"><span>Fix typing</span><b>⌫ one · ✕ all</b></div>
   </div>
 
-  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>6</span></div>
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span><a href="#contents">Contents</a> · 7</span></div>
 </section>
 
 </body>
