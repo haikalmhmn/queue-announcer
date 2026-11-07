@@ -2,70 +2,151 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Queue Announcer: Staff Guide</title>
+<title>Queue Announcer Staff Guide v1.2.1</title>
 <style>
 @page { size: A4; margin: 0; }
 :root {
   --ink: #15171C; --soft: #4A5160; --muted: #6B7280; --line: #E3E6EB; --wash: #F4F6F8;
   --teal: #00A896; --teal-bright: #00C7B1; --teal-tint: #E6F8F5; --red: #F9423A; --red-tint: #FEECEB;
+  --dark: #15171C; --dark-2: #23262E;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; background: #fff; color: var(--ink); font-family: Inter, 'DejaVu Sans', sans-serif; font-size: 10.5pt; line-height: 1.5; }
-.page { width: 210mm; height: 297mm; padding: 16mm 17mm 14mm; position: relative; page-break-after: always; overflow: hidden; display: flex; flex-direction: column; gap: 5mm; }
+html, body { margin: 0; background: #fff; color: var(--ink); font-family: Inter, 'DejaVu Sans', sans-serif; font-size: 10.5pt; line-height: 1.45; }
+.page { width: 210mm; height: 297mm; padding: 16mm 17mm 18mm; position: relative; page-break-after: always; overflow: hidden; display: flex; flex-direction: column; gap: 6mm; }
 .page:last-child { page-break-after: auto; }
-h1, h2, h3 { font-family: 'Inter Display', Inter, sans-serif; margin: 0; line-height: 1.15; text-wrap: balance; }
-h2 { font-size: 17pt; font-weight: 700; display: flex; align-items: center; gap: 3mm; }
-h2 .n { width: 8mm; height: 8mm; border-radius: 50%; background: var(--teal-bright); color: var(--ink); font-size: 11pt; display: inline-grid; place-items: center; flex-shrink: 0; }
-h3 { font-size: 11.5pt; font-weight: 700; margin-bottom: 1.5mm; }
+h1, h2, h3 { font-family: 'Inter Display', Inter, sans-serif; margin: 0; line-height: 1.15; }
+h2 { font-size: 18pt; font-weight: 700; display: flex; align-items: center; gap: 3mm; }
+h2 .n { width: 8.5mm; height: 8.5mm; border-radius: 50%; background: var(--teal-bright); color: var(--ink); font-size: 11.5pt; display: inline-grid; place-items: center; flex-shrink: 0; }
+h3 { font-size: 11pt; font-weight: 700; }
 p { margin: 0; }
-.lead { color: var(--soft); font-size: 11pt; }
+b { font-weight: 600; }
 .foot { position: absolute; left: 17mm; right: 17mm; bottom: 8mm; display: flex; justify-content: space-between; gap: 4mm; font-size: 8pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 2mm; }
+svg.i { width: 7mm; height: 7mm; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
-/* Cover band */
+/* Cover */
 .cover { display: flex; align-items: center; gap: 7mm; padding-bottom: 5mm; border-bottom: 2px solid var(--teal-bright); }
 .cover img { width: 30mm; height: 30mm; }
-.cover h1 { font-size: 28pt; font-weight: 800; }
-.cover .sub { color: var(--soft); font-size: 12pt; margin-top: 1.5mm; }
+.cover h1 { font-size: 30pt; font-weight: 800; }
+.cover .sub { color: var(--soft); font-size: 12.5pt; margin-top: 1mm; }
 .tag { display: inline-block; margin-top: 2.5mm; font-size: 8.5pt; font-weight: 600; color: var(--teal); background: var(--teal-tint); padding: 1mm 2.5mm; border-radius: 99px; }
 
-.say { background: var(--wash); border-radius: 3mm; padding: 4mm 5mm; display: flex; flex-direction: column; gap: 1.5mm; }
-.say .line { font-size: 11.5pt; }
-.say b { color: var(--teal); }
-.say .k { font-size: 8.5pt; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+/* Speech bubble */
+.bubble { display: flex; align-items: center; gap: 5mm; background: var(--dark); color: #F5F6F8; border-radius: 4mm; padding: 5mm 6mm; }
+.bubble .ic { width: 13mm; height: 13mm; border-radius: 50%; background: var(--teal-bright); color: var(--ink); display: grid; place-items: center; flex-shrink: 0; }
+.bubble .ic svg { width: 7mm; height: 7mm; }
+.bubble .lines { display: flex; flex-direction: column; gap: 1mm; font-size: 13pt; font-weight: 500; }
+.bubble b { color: var(--teal-bright); font-weight: 700; }
+.bubble .lines span:last-child { color: #A3AAB6; font-size: 11.5pt; }
 
-ol.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3mm; counter-reset: s; }
-ol.steps > li { counter-increment: s; display: grid; grid-template-columns: 7mm 1fr; gap: 3mm; }
-ol.steps > li::before { content: counter(s); width: 6.5mm; height: 6.5mm; border-radius: 50%; border: 1.5px solid var(--teal); color: var(--teal); font-weight: 700; font-size: 9pt; display: grid; place-items: center; }
-ol.steps b { font-weight: 600; }
-.url { font-family: 'DejaVu Sans Mono', monospace; font-size: 9.5pt; background: var(--wash); padding: .4mm 1.5mm; border-radius: 1mm; white-space: nowrap; }
+/* About + TOC */
+.intro { font-size: 12pt; line-height: 1.55; color: var(--ink); }
+.intro-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2.5mm; }
+.intro-list li { display: grid; grid-template-columns: 7mm 1fr; gap: 2.5mm; align-items: center; font-size: 11pt; }
+.intro-list svg { color: var(--teal); width: 6mm; height: 6mm; }
+.toc { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.toc li { display: grid; grid-template-columns: 9mm auto 1fr auto; gap: 3mm; align-items: center; padding: 3.2mm 0; border-bottom: 1px solid var(--line); }
+.toc .n { width: 7mm; height: 7mm; border-radius: 50%; background: var(--teal-bright); color: var(--ink); font-weight: 700; font-size: 9.5pt; display: grid; place-items: center; }
+.toc .t { font-weight: 600; font-size: 11.5pt; }
+.toc .t small { display: block; font-weight: 400; color: var(--muted); font-size: 9pt; }
+.toc .dots { border-bottom: 1.5px dotted #C9CED6; height: 0; align-self: end; margin-bottom: 2.4mm; }
+.toc .pg { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--teal); font-size: 11pt; }
 
-.split { display: grid; grid-template-columns: 62mm 1fr; gap: 10mm; align-items: start; padding-left: 3mm; }
-.shot { position: relative; width: 62mm; }
+/* Icon tiles */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+.tile { border: 1px solid var(--line); border-radius: 3.5mm; padding: 4mm; display: flex; flex-direction: column; gap: 2mm; }
+.tile .ib { width: 11mm; height: 11mm; border-radius: 3mm; background: var(--teal-tint); color: var(--teal); display: grid; place-items: center; }
+.tile .ib svg { width: 6.5mm; height: 6.5mm; }
+.tile h3 { font-size: 10.5pt; }
+.tile p { font-size: 9pt; color: var(--soft); }
+
+/* Step flow with pictures */
+.flow { display: grid; gap: 2mm; align-items: stretch; }
+.flow.three { grid-template-columns: 1fr 6mm 1fr 6mm 1fr; }
+.card { background: var(--wash); border-radius: 3.5mm; padding: 3.5mm; display: flex; flex-direction: column; gap: 2.5mm; }
+.card .num { width: 6.5mm; height: 6.5mm; border-radius: 50%; background: var(--ink); color: #fff; font-weight: 700; font-size: 9pt; display: grid; place-items: center; }
+.card .pic { border-radius: 2.5mm; overflow: hidden; background: var(--dark); display: grid; place-items: center; min-height: 20mm; }
+.card .pic img { width: 100%; display: block; }
+.card .pic.text { color: #F5F6F8; padding: 3mm; font-size: 9.5pt; text-align: center; gap: 1.5mm; }
+.card .cap { font-size: 10pt; font-weight: 600; }
+.card .cap small { display: block; font-weight: 400; color: var(--soft); font-size: 8.8pt; margin-top: .5mm; }
+.flow.big .card { padding: 5mm; gap: 3.5mm; }
+.flow.big .card .pic { min-height: 38mm; font-size: 10.5pt; }
+.flow.big .cap { font-size: 11pt; }
+.tiles.big .tile { padding: 5mm; }
+.tiles.big .tile h3 { font-size: 11.5pt; }
+.tiles.big .tile p { font-size: 9.8pt; }
+.arrow { display: grid; place-items: center; color: var(--teal); }
+.arrow svg { width: 6mm; height: 6mm; }
+.menu { display: inline-flex; align-items: center; gap: 1mm; flex-wrap: wrap; justify-content: center; }
+.menu span { background: var(--dark-2); border-radius: 1.2mm; padding: .6mm 1.6mm; font-weight: 600; }
+.url { font-family: 'DejaVu Sans Mono', monospace; font-size: 8.3pt; color: var(--teal-bright); line-height: 1.5; }
+
+/* Annotated screenshots */
+.shotrow { display: grid; grid-template-columns: 78mm 1fr; gap: 10mm; align-items: center; padding-left: 3mm; }
+.shot { position: relative; }
+.shot .frame { position: relative; }
 .shot img { width: 100%; display: block; border-radius: 3mm; box-shadow: 0 0 0 1px #2a2d35; }
-.shot .cap { font-size: 8.5pt; color: var(--muted); margin-top: 4mm; text-align: center; }
-.pin { position: absolute; width: 5.6mm; height: 5.6mm; margin: -2.8mm 0 0 -2.8mm; border-radius: 50%; background: var(--red); color: #fff; font-weight: 700; font-size: 8pt; display: grid; place-items: center; box-shadow: 0 0 0 1.2px #fff; }
+.pin { position: absolute; width: 6mm; height: 6mm; margin: -3mm 0 0 -3mm; border-radius: 50%; background: var(--red); color: #fff; font-weight: 700; font-size: 8.5pt; display: grid; place-items: center; box-shadow: 0 0 0 1.3px #fff; }
+.legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3mm; }
+.legend li { display: grid; grid-template-columns: 7mm 1fr; gap: 2.5mm; align-items: center; font-size: 10.5pt; }
+.legend .dot { width: 6mm; height: 6mm; border-radius: 50%; background: var(--red); color: #fff; font-weight: 700; font-size: 8.5pt; display: grid; place-items: center; }
 
-.legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2.4mm; }
-.legend li { display: grid; grid-template-columns: 6mm 1fr; gap: 2.5mm; align-items: start; }
-.legend .dot { width: 5.6mm; height: 5.6mm; border-radius: 50%; background: var(--red); color: #fff; font-weight: 700; font-size: 8pt; display: grid; place-items: center; }
-.legend b { font-weight: 600; }
+/* Mini tips row */
+.tips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+.tip { display: flex; gap: 3mm; align-items: center; background: var(--teal-tint); border-radius: 3mm; padding: 3mm 3.5mm; font-size: 9.3pt; }
+.tip svg { color: var(--teal); width: 6.5mm; height: 6.5mm; }
+.tip.warn { background: var(--red-tint); }
+.tip.warn svg { color: var(--red); }
+kbd { font-family: Inter, sans-serif; font-size: 8.3pt; font-weight: 600; border: 1px solid #C9CED6; border-bottom-width: 2px; border-radius: 1.2mm; padding: 0 1.2mm; background: #fff; }
 
-.note { border-radius: 3mm; padding: 3.5mm 4.5mm; background: var(--teal-tint); font-size: 10pt; }
-.note.warn { background: var(--red-tint); }
-.note b { font-weight: 700; }
+/* Screen diagram */
+.diagram { display: grid; grid-template-columns: 1fr 52mm; gap: 8mm; align-items: center; }
+.monitor { position: relative; aspect-ratio: 16 / 10; border: 2.2mm solid #2a2d35; border-radius: 3mm; background: linear-gradient(#EEF1F4, #E2E6EB); }
+.monitor::after { content: ""; position: absolute; left: 40%; right: 40%; bottom: -9mm; height: 6mm; background: #2a2d35; border-radius: 0 0 1.5mm 1.5mm; }
+.monitor .other { position: absolute; left: 5%; top: 8%; width: 55%; height: 62%; background: #fff; border-radius: 1.5mm; box-shadow: 0 0 0 1px #D5D9E0; padding: 2mm; font-size: 7.5pt; color: var(--muted); }
+.monitor .other i { display: block; height: 1.6mm; background: #E3E6EB; border-radius: 1mm; margin-top: 1.6mm; }
+.monitor .float { position: absolute; right: 3%; top: 5%; width: 21%; height: 56%; background: var(--dark); border-radius: 1.5mm; box-shadow: 0 0 0 1.2px var(--teal-bright), 0 2mm 5mm rgba(0,0,0,.25); display: flex; flex-direction: column; padding: 1.5mm; gap: 1mm; }
+.monitor .float i { display: block; flex: 1; background: var(--dark-2); border-radius: .8mm; }
+.monitor .float i.a { flex: 0 0 15%; background: var(--teal-bright); }
+.monitor .tab { position: absolute; right: 3%; bottom: 5%; width: 21%; height: 16%; background: var(--dark); border-radius: 1.5mm; box-shadow: 0 0 0 1px #2a2d35; }
+.monitor .lbl { position: absolute; font-size: 7.5pt; font-weight: 700; color: var(--ink); background: #fff; border-radius: 99px; padding: .4mm 2mm; box-shadow: 0 0 0 1px var(--line); white-space: nowrap; }
+.keys { display: flex; flex-direction: column; gap: 3mm; }
+.key { display: grid; grid-template-columns: 7mm 1fr; gap: 2.5mm; align-items: start; font-size: 10pt; }
+.key .sw { width: 6mm; height: 6mm; border-radius: 1.5mm; margin-top: .5mm; }
 
-table { width: 100%; border-collapse: collapse; font-size: 10pt; }
-th, td { text-align: left; vertical-align: top; padding: 2.2mm 2.5mm; border-bottom: 1px solid var(--line); }
-th { font-size: 8.5pt; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
-td:first-child { font-weight: 600; white-space: nowrap; width: 1%; }
+/* Fix cards */
+.fixes { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.fix { border: 1px solid var(--line); border-radius: 3.5mm; padding: 4mm; display: grid; grid-template-columns: 11mm 1fr; gap: 3.5mm; align-items: start; }
+.fix .ib { width: 11mm; height: 11mm; border-radius: 3mm; background: var(--red-tint); color: var(--red); display: grid; place-items: center; }
+.fix .ib svg { width: 6.5mm; height: 6.5mm; }
+.fix h3 { font-size: 10.5pt; margin-bottom: 1mm; }
+.fix p { font-size: 9.3pt; color: var(--soft); }
 
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: 7mm; align-items: start; }
-.pair { display: grid; grid-template-columns: 52mm 52mm; gap: 10mm; justify-content: center; }
-.pair .shot { width: 100%; }
-kbd { font-family: Inter, sans-serif; font-size: 8.5pt; font-weight: 600; border: 1px solid #C9CED6; border-bottom-width: 2px; border-radius: 1.2mm; padding: 0 1.4mm; background: #fff; }
+/* Quick reference strip */
+.quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+.q { background: var(--dark); color: #F5F6F8; border-radius: 3mm; padding: 3.5mm; display: flex; flex-direction: column; gap: 1.5mm; }
+.q span { font-size: 8.5pt; color: #A3AAB6; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+.q b { font-size: 10.5pt; color: var(--teal-bright); }
 </style>
 </head>
 <body>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="speaker" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></symbol>
+  <symbol id="muted" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></symbol>
+  <symbol id="monitor" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="wifi" viewBox="0 0 24 24"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5.5 12a10 10 0 0 1 13 0"/><path d="M9 15.5a5 5 0 0 1 6 0"/><circle cx="12" cy="19" r="1"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
+  <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></symbol>
+  <symbol id="del" viewBox="0 0 24 24"><path d="M21 5H9l-6 7 6 7h12V5z"/><path d="M17 9l-5 5M12 9l5 5"/></symbol>
+  <symbol id="refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></symbol>
+  <symbol id="robot" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4M9 12h.01M15 12h.01M9 16h6"/></symbol>
+  <symbol id="window" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><rect x="12" y="11" width="7" height="6" rx="1"/></symbol>
+  <symbol id="x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></symbol>
+  <symbol id="info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+</svg>
 
 <!-- PAGE 1 -->
 <section class="page">
@@ -73,180 +154,257 @@ kbd { font-family: Inter, sans-serif; font-size: 8.5pt; font-weight: 600; border
     <img src="logo-big.png" alt="Foodle logo">
     <div>
       <h1>Queue Announcer</h1>
-      <p class="sub">Staff guide: how to call out orders at the counter</p>
+      <p class="sub">Staff guide: calling out orders at the counter</p>
       <span class="tag">For version 1.2.1 and later</span>
     </div>
   </div>
 
-  <div>
-    <h3>What it does</h3>
-    <p class="lead">You key in the order code from the receipt. The app rings the Foodle bell, then a clear voice reads the code one character at a time, so customers know their food is ready.</p>
+  <h2 style="font-size:15pt">What this guide is about</h2>
+  <p class="intro">Queue Announcer calls out orders for you. You type the order code from the receipt, and the computer plays a bell and reads the code out loud, so customers know their food is ready. This guide shows you how to set it up and use it at the counter.</p>
+
+  <div class="bubble">
+    <div class="ic"><svg class="i"><use href="#bell"/></svg></div>
+    <div class="lines">
+      <span><b>“A, 1, 0, 5.</b> Please collect your order.”</span>
+      <span>“Once again, A, 1, 0, 5.”</span>
+    </div>
   </div>
 
-  <div class="say">
-    <span class="k">What customers hear</span>
-    <span class="line"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00A896" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg> <i style="color:#6B7280">bell</i>, <b>“A, 1, 0, 5.</b> Please collect your order.”</span>
-    <span class="line"><b>“Once again, A, 1, 0, 5.”</b></span>
+  <ul class="intro-list">
+    <li><svg class="i"><use href="#info"/></svg><span><b>Who it's for:</b> counter staff and supervisors.</span></li>
+    <li><svg class="i"><use href="#refresh"/></svg><span><b>Version:</b> written for Queue Announcer <b>1.2.1</b>.</span></li>
+  </ul>
+
+  <h2 style="font-size:15pt">Contents</h2>
+  <ul class="toc">
+    <li><span class="n">1</span><span class="t">Install<small>What you need and how to put it on a PC</small></span><span class="dots"></span><span class="pg">2</span></li>
+    <li><span class="n">2</span><span class="t">Announce an order<small>Type, announce, and what each button does</small></span><span class="dots"></span><span class="pg">3</span></li>
+    <li><span class="n">3</span><span class="t">Call again from Recent<small>Recall an order that was already called</small></span><span class="dots"></span><span class="pg">4</span></li>
+    <li><span class="n">4</span><span class="t">Floating window<small>Keeping the announcer on top of other apps</small></span><span class="dots"></span><span class="pg">4</span></li>
+    <li><span class="n">5</span><span class="t">Settings<small>Volume, speed, bell and more</small></span><span class="dots"></span><span class="pg">5</span></li>
+    <li><span class="n">6</span><span class="t">Quick fixes<small>What to do when something goes wrong</small></span><span class="dots"></span><span class="pg">6</span></li>
+  </ul>
+
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>1</span></div>
+</section>
+
+<!-- PAGE 2 -->
+<section class="page">
+  <h2><span class="n">1</span>Install</h2>
+  <h3 style="font-size:13pt">You need</h3>
+  <div class="tiles big">
+    <div class="tile"><div class="ib"><svg class="i"><use href="#monitor"/></svg></div><h3>Microsoft Edge</h3><p>On a computer, for the Ava voice.</p></div>
+    <div class="tile"><div class="ib"><svg class="i"><use href="#speaker"/></svg></div><h3>Speakers on</h3><p>Loud enough for the counter.</p></div>
+    <div class="tile"><div class="ib"><svg class="i"><use href="#wifi"/></svg></div><h3>Internet</h3><p>To start. Keeps working if it drops.</p></div>
   </div>
 
-  <div>
-    <h3>Before you start</h3>
-    <ol class="steps">
-      <li><span>Use a computer with <b>Microsoft Edge</b>. Edge has the natural voice (Ava) the app is built for.</span></li>
-      <li><span>Make sure the speakers are on and loud enough to be heard at the counter.</span></li>
-      <li><span>The app needs the internet to start. If the internet drops later, it keeps working.</span></li>
-    </ol>
+  <h3 style="font-size:13pt;margin-top:4mm">Install it (one time per PC)</h3>
+  <div class="flow three big">
+    <div class="card">
+      <span class="num">1</span>
+      <div class="pic text"><svg class="i" style="color:#00C7B1"><use href="#monitor"/></svg><span class="url">haikalmhmn<br>.github.io/<br>queue-announcer</span></div>
+      <p class="cap">Open the link in Edge</p>
+    </div>
+    <div class="arrow"><svg class="i"><use href="#arrow"/></svg></div>
+    <div class="card">
+      <span class="num">2</span>
+      <div class="pic text"><span class="menu"><span>⋯</span>›<span>Apps</span>›<span>Install this site as an app</span></span></div>
+      <p class="cap">Install it</p>
+    </div>
+    <div class="arrow"><svg class="i"><use href="#arrow"/></svg></div>
+    <div class="card">
+      <span class="num">3</span>
+      <div class="pic" style="background:#fff;box-shadow:0 0 0 1px #E3E6EB"><img src="logo-big.png" alt="" style="width:24mm;margin:3mm auto"></div>
+      <p class="cap">Open from the desktop icon</p>
+    </div>
   </div>
 
-  <div>
-    <h2><span class="n">1</span>Install it on a PC (one time)</h2>
-  </div>
-  <ol class="steps">
-    <li><span>Open Edge and go to <span class="url">https://haikalmhmn.github.io/queue-announcer/</span></span></li>
-    <li><span>Click the <b>⋯</b> menu at the top right, then <b>Apps</b>, then <b>Install this site as an app</b>.</span></li>
-    <li><span>Click <b>Install</b>. A <b>Queue Announcer</b> icon with the Foodle logo appears on the desktop and Start menu.</span></li>
-    <li><span>From now on, open the app from that icon. You don't need to open Edge first.</span></li>
-  </ol>
+  <div class="tip"><svg class="i"><use href="#refresh"/></svg><span><b>Updates install themselves.</b> No need to reinstall.</span></div>
 
-  <div class="note"><b>Updates are automatic.</b> When the app is improved, every PC gets the new version by itself within about 10 minutes. Nobody needs to reinstall anything.</div>
-
-  <div class="foot"><span>Queue Announcer · Staff guide</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>1</span></div>
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>2</span></div>
 </section>
 
 <!-- PAGE 2 -->
 <section class="page">
   <h2><span class="n">2</span>Announce an order</h2>
 
-  <div class="split">
+  <div class="flow three big">
+    <div class="card">
+      <span class="num">1</span>
+      <div class="pic"><img src="crop-code.png" alt=""></div>
+      <p class="cap">Type the code<small>From the receipt</small></p>
+    </div>
+    <div class="arrow"><svg class="i"><use href="#arrow"/></svg></div>
+    <div class="card">
+      <span class="num">2</span>
+      <div class="pic"><img src="crop-actions.png" alt=""></div>
+      <p class="cap">Tap Announce</p>
+    </div>
+    <div class="arrow"><svg class="i"><use href="#arrow"/></svg></div>
+    <div class="card">
+      <span class="num">3</span>
+      <div class="pic"><img src="crop-speaking.png" alt=""></div>
+      <p class="cap">Bell + voice, twice<small>Wait until it finishes</small></p>
+    </div>
+  </div>
+
+  <div class="shotrow">
     <div class="shot">
-      <div style="position:relative"><img src="main.png" alt="Main screen">
-      <span class="pin" style="left:-4%;top:8%">1</span>
-      <span class="pin" style="left:73%;top:0%">2</span>
-      <span class="pin" style="left:88%;top:0%">3</span>
-      <span class="pin" style="left:-4%;top:21%">4</span>
-      <span class="pin" style="left:104%;top:21%">5</span>
-      <span class="pin" style="left:-4%;top:44%">6</span>
-      <span class="pin" style="left:-4%;top:76%">7</span>
-      <span class="pin" style="left:12%;top:100%">8</span>
-      <span class="pin" style="left:50%;top:100%">9</span>
-      <span class="pin" style="left:88%;top:100%">10</span>
+      <div class="frame">
+        <img src="main.png" alt="Main screen">
+        <span class="pin" style="left:-4%;top:8%">1</span>
+        <span class="pin" style="left:73%;top:0%">2</span>
+        <span class="pin" style="left:88%;top:0%">3</span>
+        <span class="pin" style="left:104%;top:21%">4</span>
+        <span class="pin" style="left:-4%;top:44%">5</span>
+        <span class="pin" style="left:104%;top:81%">6</span>
+        <span class="pin" style="left:12%;top:100%">7</span>
+        <span class="pin" style="left:50%;top:100%">8</span>
+        <span class="pin" style="left:88%;top:100%">9</span>
       </div>
-      <p class="cap">Main screen</p>
     </div>
     <ul class="legend">
-      <li><span class="dot">1</span><span><b>Now calling</b>: the last order announced.</span></li>
-      <li><span class="dot">2</span><span><b>Repeat</b>: say the last order again.</span></li>
-      <li><span class="dot">3</span><span><b>Mute</b>: turns all sound off (the icon turns red). Tap again to turn sound back on.</span></li>
-      <li><span class="dot">4</span><span><b>Code display</b>: shows what you're typing.</span></li>
-      <li><span class="dot">5</span><span><b>✕ Clear</b>: wipes the whole code.</span></li>
-      <li><span class="dot">6</span><span><b>Letters</b> A to Z.</span></li>
-      <li><span class="dot">7</span><span><b>Numbers</b> 0 to 9, the dash <b>–</b>, and <b>⌫</b> to delete the last character.</span></li>
-      <li><span class="dot">8</span><span><b>Recent</b>: today's called orders, to call one again.</span></li>
-      <li><span class="dot">9</span><span><b>Announce</b>: calls out the code.</span></li>
-      <li><span class="dot">10</span><span><b>Settings</b>: sound and app options.</span></li>
+      <li><span class="dot">1</span><span>Now calling</span></li>
+      <li><span class="dot">2</span><span><b>Repeat</b> last order</span></li>
+      <li><span class="dot">3</span><span><b>Mute</b> (red = off)</span></li>
+      <li><span class="dot">4</span><span><b>✕</b> clear code</span></li>
+      <li><span class="dot">5</span><span>Letters and numbers</span></li>
+      <li><span class="dot">6</span><span><b>⌫</b> delete one</span></li>
+      <li><span class="dot">7</span><span><b>Recent</b> orders</span></li>
+      <li><span class="dot">8</span><span><b>Announce</b></span></li>
+      <li><span class="dot">9</span><span><b>Settings</b></span></li>
     </ul>
   </div>
 
-  <div>
-    <h3>Calling an order</h3>
-    <ol class="steps">
-      <li><span>Tap the code from the receipt, for example <b>A 1 0 5</b>. Codes can be up to 8 characters.</span></li>
-      <li><span>Tap <b>Announce</b>. The bell rings, then the code is read out twice.</span></li>
-      <li><span>Made a mistake? Tap <b>⌫</b> to remove the last character, or <b>✕</b> to start over.</span></li>
-    </ol>
+  <div class="tips">
+    <div class="tip"><svg class="i"><use href="#clock"/></svg><span><b>One at a time.</b> Next code can be typed while it speaks.</span></div>
+    <div class="tip"><svg class="i"><use href="#del"/></svg><span>Up to <b>8</b> characters, e.g. <b>T-042</b>.</span></div>
+    <div class="tip"><svg class="i"><use href="#keyboard"/></svg><span>Keyboard: <kbd>Enter</kbd> announce, <kbd>Esc</kbd> clear.</span></div>
   </div>
 
-  <div class="two">
-    <div class="note"><b>One call at a time.</b> While a code is being read, the button shows <b>Speaking… please wait</b>. You can already type the next code; tap Announce when it turns teal again.</div>
-    <div class="note"><b>Using a keyboard?</b> Type the code, press <kbd>Enter</kbd> to announce, <kbd>Backspace</kbd> to delete, and <kbd>Esc</kbd> to clear.</div>
-  </div>
-
-  <div class="foot"><span>Queue Announcer · Staff guide</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>2</span></div>
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>3</span></div>
 </section>
 
 <!-- PAGE 3 -->
 <section class="page">
-  <h2><span class="n">3</span>Call an order again (Recent)</h2>
-  <div class="split">
+  <h2><span class="n">3</span>Call again from Recent</h2>
+  <div class="shotrow">
     <div class="shot">
-      <img src="recent.png" alt="Recent screen">
-      <p class="cap">Recent screen</p>
+      <div class="frame">
+        <img src="recent.png" alt="Recent screen">
+        <span class="pin" style="left:104%;top:21%">1</span>
+        <span class="pin" style="left:-4%;top:21%">2</span>
+        <span class="pin" style="left:50%;top:100%">3</span>
+      </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:4mm">
-      <p>Tap <b>Recent</b> at the bottom left of the main screen. It lists every order called today on this PC, newest first, with the time and how many times it was called.</p>
-      <ol class="steps">
-        <li><span>Find the order and tap its <b>Recall</b> button. The bell and voice play again.</span></li>
-        <li><span>While an order is being read, a red <b>Calling …</b> tag shows at the top and the other Recall buttons wait.</span></li>
-        <li><span>Tap <b>Back</b> at the bottom to return to the keypad.</span></li>
-      </ol>
-      <p class="lead" style="font-size:10pt">The list starts fresh each day. Swipe up and down to see older orders.</p>
-    </div>
+    <ul class="legend">
+      <li><span class="dot">1</span><span><b>Recall</b> plays it again</span></li>
+      <li><span class="dot">2</span><span>Code, time, times called</span></li>
+      <li><span class="dot">3</span><span><b>Back</b> to the keypad</span></li>
+      <li style="grid-template-columns:7mm 1fr;color:var(--muted)"><svg class="i" style="width:5.5mm;height:5.5mm;justify-self:center"><use href="#info"/></svg><span>Today only, on this PC. Swipe to scroll.</span></li>
+    </ul>
   </div>
 
-  <h2><span class="n">4</span>The floating window</h2>
-  <p>The first time you tap the app after opening it, the announcer moves into a <b>small floating window that stays on top of other apps</b>. You can use the PC for other work and the keypad is always within reach.</p>
-  <ol class="steps">
-    <li><span>The main app window shrinks to a small tab in the <b>bottom-right corner</b> showing <b>Announcer is floating</b>.</span></li>
-    <li><span>Drag the floating window to wherever suits you, for example the <b>top-right corner</b>. Edge remembers the spot next time.</span></li>
-    <li><span>To bring the announcer back into the main window, tap <b>Bring it back</b> on the small tab, or close the floating window.</span></li>
-  </ol>
-  <div class="note warn"><b>Don't close the small tab.</b> The floating window belongs to it, so closing it also closes the announcer. You can minimize it with the <b>–</b> button instead.</div>
+  <h2><span class="n">4</span>Floating window</h2>
+  <div class="diagram">
+    <div class="monitor">
+      <div class="other">Your other work<i></i><i style="width:80%"></i><i style="width:60%"></i></div>
+      <div class="float"><i class="a"></i><i></i><i></i></div>
+      <div class="tab"></div>
+      <span class="lbl" style="right:26%;top:6%">Announcer (stays on top)</span>
+      <span class="lbl" style="right:26%;bottom:7%">Small tab: don't close</span>
+    </div>
+    <div class="keys">
+      <div class="key"><span class="sw" style="background:#15171C;box-shadow:0 0 0 1.2px #00C7B1"></span><span><b>First tap</b> → announcer floats on top. Drag it where you like.</span></div>
+      <div class="key"><span class="sw" style="background:#15171C"></span><span><b>Small tab</b> moves to the bottom right.</span></div>
+      <div style="padding-left:9.5mm"><img src="tab.png" alt="Small tab" style="width:40mm;border-radius:2mm;box-shadow:0 0 0 1px #2a2d35;display:block"></div>
+      <div class="key"><span></span><span><b>Bring it back</b> returns it to the main window.</span></div>
+    </div>
+  </div>
+  <div class="tip warn"><svg class="i"><use href="#x"/></svg><span><b>Don't close the small tab</b>: it closes the announcer too. Minimize it with <b>–</b> instead.</span></div>
 
-  <div class="foot"><span>Queue Announcer · Staff guide</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>3</span></div>
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>4</span></div>
 </section>
 
 <!-- PAGE 4 -->
 <section class="page">
   <h2><span class="n">5</span>Settings</h2>
-  <div class="pair">
-    <div class="shot"><img src="settings.png" alt="Settings, top"><p class="cap">Settings (top)</p></div>
-    <div class="shot"><img src="settings2.png" alt="Settings, bottom"><p class="cap">Settings (scroll down)</p></div>
+  <div style="display:grid;grid-template-columns:58mm 58mm;gap:16mm;justify-content:center;padding-top:2mm">
+    <div class="shot"><div class="frame">
+      <img src="settings.png" alt="Settings, top">
+      <span class="pin" style="left:-4%;top:20%">1</span>
+      <span class="pin" style="left:-4%;top:39%">2</span>
+      <span class="pin" style="left:-4%;top:58%">3</span>
+      <span class="pin" style="left:-4%;top:73%">4</span>
+      <span class="pin" style="left:-4%;top:85%">5</span>
+    </div></div>
+    <div class="shot"><div class="frame">
+      <img src="settings2.png" alt="Settings, scrolled down">
+      <span class="pin" style="left:-4%;top:18%">6</span>
+      <span class="pin" style="left:-4%;top:42%">7</span>
+      <span class="pin" style="left:-4%;top:53%">8</span>
+      <span class="pin" style="left:-4%;top:63%">9</span>
+      <span class="pin" style="left:-4%;top:81%">10</span>
+    </div></div>
   </div>
-  <table>
-    <tr><th>Setting</th><th>What it does</th></tr>
-    <tr><td>Voice</td><td>Shows the voice in use (Ava). If a PC doesn't have Ava, a similar voice is used and a note suggests updating Edge.</td></tr>
-    <tr><td>Announcement volume</td><td>Makes the bell and voice louder or softer for this app only, not for the whole PC. Use <b>−</b> and <b>+</b>.</td></tr>
-    <tr><td>Speaking speed</td><td>Slow, Calm or Normal for the words. The order code is always read at the same steady pace.</td></tr>
-    <tr><td>Say the number</td><td>Once, Twice or 3 times.</td></tr>
-    <tr><td>Bell before voice</td><td>Turns the bell on or off. <b>Bell sound</b> picks which bell; tap <b>Test</b> to hear it.</td></tr>
-    <tr><td>Test voice</td><td>Plays the full announcement so you can check the sound.</td></tr>
-    <tr><td>Float on top</td><td>Opens the floating window by hand. The switch below it controls whether it opens by itself at the first tap.</td></tr>
-    <tr><td>About &amp; version</td><td>Shows the version, whether it's up to date, and what changed in each version.</td></tr>
-  </table>
-  <p class="lead" style="font-size:9.5pt">Each PC remembers its own settings, so a busy counter can be louder than a quiet one.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:3mm 10mm;padding:0 4mm">
+    <ul class="legend">
+      <li><span class="dot">1</span><span><b>Voice</b>: Ava</span></li>
+      <li><span class="dot">2</span><span><b>Volume</b> (this app only)</span></li>
+      <li><span class="dot">3</span><span><b>Speed</b> of the words</span></li>
+      <li><span class="dot">4</span><span><b>Say the number</b> 1, 2 or 3 times</span></li>
+      <li><span class="dot">5</span><span><b>Bell</b> on / off, sound + Test</span></li>
+    </ul>
+    <ul class="legend">
+      <li><span class="dot">6</span><span>What will be said</span></li>
+      <li><span class="dot">7</span><span><b>Test voice</b></span></li>
+      <li><span class="dot">8</span><span>Open <b>floating window</b></span></li>
+      <li><span class="dot">9</span><span>Float at first tap on / off</span></li>
+      <li><span class="dot">10</span><span><b>About &amp; version</b></span></li>
+    </ul>
+  </div>
+  <div class="tip"><svg class="i"><use href="#info"/></svg><span>Each PC keeps its own settings. The code is always read at the same steady pace.</span></div>
 
-  <div class="foot"><span>Queue Announcer · Staff guide</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>4</span></div>
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>5</span></div>
 </section>
 
 <!-- PAGE 5 -->
 <section class="page">
-  <h2><span class="n">6</span>If something goes wrong</h2>
-  <table>
-    <tr><th>Problem</th><th>Try this</th></tr>
-    <tr><td>No sound at all</td><td>Check the <b>Mute</b> icon on the main screen isn't red. Check <b>Settings → Announcement volume</b>. In Windows, right-click the speaker icon, open <b>Volume mixer</b>, and make sure <b>Edge</b> isn't muted.</td></tr>
-    <tr><td>“The voice didn't play”</td><td>The bell worked but the voice didn't start. Check Edge isn't muted, then tap <b>Repeat</b>. If it keeps happening, check the internet connection.</td></tr>
-    <tr><td>Voice sounds robotic</td><td>The app isn't running in Edge, or Edge is out of date. Open it from the Queue Announcer icon and update Edge.</td></tr>
-    <tr><td>No floating window</td><td>It only works in Edge (or Chrome) on a computer. Open <b>Settings → Float on top of other apps</b>.</td></tr>
-    <tr><td>Announcer disappeared</td><td>The small tab was probably closed. Open the app again from its desktop icon.</td></tr>
-    <tr><td>Want the latest version now</td><td>Close the app completely and open it again. Check <b>Settings → About &amp; version</b>.</td></tr>
-  </table>
+  <h2><span class="n">6</span>Quick fixes</h2>
+  <div class="fixes">
+    <div class="fix"><div class="ib"><svg class="i"><use href="#muted"/></svg></div><div><h3>No sound</h3><p>Mute not red? Volume up in Settings? Edge not muted in Windows <b>Volume mixer</b>?</p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#bell"/></svg></div><div><h3>Bell plays, no voice</h3><p>Check Edge isn't muted, then tap <b>Repeat</b>. Check the internet.</p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#robot"/></svg></div><div><h3>Voice sounds robotic</h3><p>Open from the desktop icon, not another browser. Update Edge.</p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#window"/></svg></div><div><h3>No floating window</h3><p>Settings → <b>Float on top of other apps</b>. Edge on a computer only.</p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#x"/></svg></div><div><h3>Announcer disappeared</h3><p>The small tab was closed. Open the app again from the desktop icon.</p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#refresh"/></svg></div><div><h3>Need the newest version</h3><p>Close the app fully and reopen. Check <b>About &amp; version</b>.</p></div></div>
+  </div>
 
-  <div class="split" style="grid-template-columns: 62mm 1fr; margin-top:2mm">
-    <div class="shot"><img src="about.png" alt="About screen"><p class="cap">About &amp; version</p></div>
-    <div style="display:flex;flex-direction:column;gap:4mm">
+  <div class="shotrow" style="grid-template-columns:54mm 1fr;margin-top:2mm">
+    <div class="shot"><div class="frame">
+      <img src="about.png" alt="About screen">
+      <span class="pin" style="left:104%;top:39%">1</span>
+      <span class="pin" style="left:104%;top:51%">2</span>
+      <span class="pin" style="left:104%;top:76%">3</span>
+    </div></div>
+    <div style="display:flex;flex-direction:column;gap:5mm">
       <h3>Which version am I on?</h3>
-      <p>Go to <b>Settings → About &amp; version</b>. It shows the version number, whether the app is up to date, and a list of what changed. Older versions stay listed underneath, so you can always see the history.</p>
-      <h3>Quick reference</h3>
-      <table>
-        <tr><td>Call an order</td><td>Type code → <b>Announce</b></td></tr>
-        <tr><td>Say it again</td><td><b>Repeat</b> (top) or <b>Recent → Recall</b></td></tr>
-        <tr><td>Silence</td><td><b>Mute</b> (top right)</td></tr>
-        <tr><td>Fix typing</td><td><b>⌫</b> last character, <b>✕</b> all</td></tr>
-      </table>
+      <ul class="legend">
+        <li><span class="dot">1</span><span>Version number</span></li>
+        <li><span class="dot">2</span><span>Up to date or not</span></li>
+        <li><span class="dot">3</span><span>What changed (older versions below)</span></li>
+      </ul>
     </div>
   </div>
 
-  <div class="foot"><span>Queue Announcer · Staff guide</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>5</span></div>
+  <div class="quick">
+    <div class="q"><span>Call</span><b>Code → Announce</b></div>
+    <div class="q"><span>Again</span><b>Repeat · Recall</b></div>
+    <div class="q"><span>Silence</span><b>Mute</b></div>
+    <div class="q"><span>Fix typing</span><b>⌫ one · ✕ all</b></div>
+  </div>
+
+  <div class="foot"><span>Queue Announcer · Staff guide · v1.2.1</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>6</span></div>
 </section>
 
 </body>
