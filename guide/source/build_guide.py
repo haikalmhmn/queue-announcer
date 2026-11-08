@@ -7,7 +7,7 @@ import os
 import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-VERSION = "1.4.0"
+VERSION = "1.4.1"
 CREATED = "6 Nov 2026"
 NAME = "Queue Announcer"
 
@@ -137,16 +137,16 @@ S_MID = shot('settings-mid.jpg', 'Settings unlocked, middle', [
 ], [(10, 62, 38.15), (11, -2.6, 53), (12, -2.6, 72.8)])
 
 S_BOT = shot('settings2.jpg', 'Settings unlocked, bottom', [
-    ('box', 3.25, 20.1, 93.5, 10.4),          # 13 test voice
-    ('box', 3.25, 31.7, 93.5, 10.4),          # 14 float button
-    ('box', 79.25, 42.3, 16.5, 8.9),          # 15 float switch
-], [(13, -2.6, 25.4), (14, -2.6, 37), (15, 62, 46.75)])
+    ('box', 3.25, 14.6, 93.5, 10.4),          # 13 test voice
+    ('box', 3.25, 26.3, 93.5, 10.4),          # 14 float button
+    ('box', 79.25, 36.8, 16.5, 8.9),          # 15 float switch
+], [(13, -2.6, 19.8), (14, -2.6, 31.5), (15, 62, 41.25)])
 
 ABOUT = shot('about.jpg', 'About screen', [
-    ('box', 37.5, 36.8, 25, 4.75),            # 1 version
-    ('box', 3.25, 43.3, 93.5, 12.3),          # 2 up to date
-    ('box', 3.25, 68.7, 93.5, 29),            # 3 what's new
-], [(1, 68.5, 39.2), (2, 102.6, 49.5), (3, 102.6, 83)]).replace('class="pin"', 'class="pin sm"')
+    ('box', 16.5, 37.0, 66.9, 8.8),           # 1 version + created by
+    ('box', 3.25, 47.8, 93.5, 12.5),          # 2 up to date
+    ('box', 3.25, 73.2, 93.5, 17.9),          # 3 what's new
+], [(1, 90, 41.4), (2, 102.6, 54), (3, 102.6, 82)]).replace('class="pin"', 'class="pin sm"')
 
 ARROW = '<div class="arrow"><svg class="i"><use href="#arrow"/></svg></div>'
 
@@ -370,7 +370,7 @@ BODY = f"""
   <div class="shotrow" style="grid-template-columns:42mm 1fr;align-items:center">
     {ABOUT}
     {keybox([
-        (1, 'Version number', 'Nombor versi'),
+        (1, 'Version number and who made it', 'Nombor versi dan pembuatnya'),
         (2, 'Up to date or not', 'Terkini atau tidak'),
         (3, 'What changed (older versions below)', 'Apa yang berubah (versi lama di bawah)'),
     ])}

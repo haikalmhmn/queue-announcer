@@ -31,6 +31,12 @@ Every release, before it goes online:
 
 ---
 
+## 1.4.1 — 8 Nov 2026
+- About page shows who created the app
+- Small credit line at the bottom of Settings
+- Back button on Recent now points right, towards the main page
+- Shorter pause between the order code and "Please collect your order"
+
 ## 1.4.0 — 8 Nov 2026
 - New Reset to default settings button in Settings (no PIN needed)
 - New defaults: Normal speed, number said once

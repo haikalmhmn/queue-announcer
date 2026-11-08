@@ -179,6 +179,9 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
 .app-icon{width:96px;height:96px;display:block}
 .about-name{font-family:var(--display);font-size:20px;font-weight:700}
 .about-ver{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.about-by{font-size:13px;color:var(--muted);text-align:center;line-height:1.4}
+.about-by b{color:var(--fg);font-weight:600}
+.credit{margin:2px 0 0;text-align:center;font-size:12px;color:var(--dim)}
 .update-card{display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;background:var(--surface)}
 .update-card.ok{background:var(--teal-tint)}
 .update-card.ok .uc-title{color:var(--teal-text)} .update-card.ok .uc-sub{color:var(--teal-sub)} .update-card.ok svg{color:var(--teal)}
@@ -366,6 +369,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
         </div>
 
         <button type="button" class="btn link-row" data-go="about">About &amp; version <span><span id="verSmall"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg></span></button>
+        <p class="credit" id="credit"></p>
       </div>
     </div>
     <button type="button" class="btn back-bar" data-go="main"></button>
@@ -381,6 +385,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       <img class="app-icon" src="icons/icon-192.png" alt="Foodle logo" width="96" height="96">
       <span class="about-name">Queue Announcer</span>
       <span class="about-ver" id="verBig"></span>
+      <span class="about-by">Created by <b>Haikal</b> · IT &amp; Merchant Support</span>
     </div>
     <div class="update-card" id="updCard">
       <span id="updIcon"></span>
@@ -415,6 +420,13 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Newest first. Add each new version ON TOP; never delete or edit older entries (they are the history).
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
+    {
+      version: '1.4.1', date: '8 Nov 2026',
+      notes: [
+        'About page shows who created the app',
+        'Small credit line at the bottom of Settings', 'Back button on Recent now points right, towards the main page', 'Shorter pause between the order code and "Please collect your order"'
+      ]
+    },
     {
       version: '1.4.0', date: '8 Nov 2026',
       notes: [
@@ -516,6 +528,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     clock: '<circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline>',
     gear: '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path>',
     back: '<polyline points="15 18 9 12 15 6"></polyline>',
+    fwd: '<polyline points="9 18 15 12 9 6"></polyline>',
     x: '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>',
     del: '<path d="M21 5H9l-6 7 6 7h12V5z"></path><line x1="17" y1="9" x2="12" y2="14"></line><line x1="12" y1="9" x2="17" y2="14"></line>',
     play: '<polygon points="6 4 20 12 6 20 6 4"></polygon>',
@@ -581,13 +594,17 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   appEl.querySelector('.nav-btn[data-go="recent"]').innerHTML = ic(I.clock) + '<span>Recent</span>';
   appEl.querySelector('.nav-btn[data-go="settings"]').innerHTML = ic(I.gear) + '<span>Settings</span>';
   Array.prototype.forEach.call(appEl.querySelectorAll('.back-bar'), function (b) {
-    b.innerHTML = ic(I.back, 20, 2.2) + (b.dataset.go === 'settings' ? 'Back to Settings' : 'Back');
+    // Recent opens from the button on the left, so its Back points right (towards the main page).
+    var fromRecent = !!b.closest('#view-recent');
+    b.innerHTML = fromRecent ? 'Back' + ic(I.fwd, 20, 2.2)
+      : ic(I.back, 20, 2.2) + (b.dataset.go === 'settings' ? 'Back to Settings' : 'Back');
   });
   els.testBtn.innerHTML = ic(I.play, 18, 2.2) + 'Test voice';
   $('bellTest').innerHTML = ic(I.play, 16, 2.2) + 'Test';
   els.checkBtn.innerHTML = ic(I.refresh, 18) + 'Check for updates';
   $('verBig').textContent = 'Version ' + APP_VERSION;
   $('verSmall').textContent = 'v' + APP_VERSION;
+  $('credit').textContent = 'Queue Announcer ' + APP_VERSION + ' · by Haikal';
   (function renderReleases() {
     function block(r, title) {
       var d = document.createElement('div'); d.className = 'rel';
@@ -757,8 +774,11 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     var i = template.indexOf('{code}'), before = template.slice(0, i).trim(), after = template.slice(i + 6);
     var parts = [];
     if (before) parts.push({ text: before });
-    parts.push({ text: spelled(code) + (/^[,.!]/.test(after) ? after.charAt(0) : ''), slow: true });
+    var punct = /^[,.!]/.test(after) ? after.charAt(0) : '';
     after = after.replace(/^[,.!]\s*/, '').trim();
+    // No full stop after the code when words follow: the full stop adds a long silence
+    // before "Please collect your order". The gap between the two parts is enough.
+    parts.push({ text: spelled(code) + (after ? '' : punct), slow: true });
     if (after) parts.push({ text: after });
     return parts;
   }
