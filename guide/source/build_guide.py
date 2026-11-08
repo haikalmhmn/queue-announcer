@@ -112,11 +112,11 @@ RECENT = shot('recent.jpg', 'Recent screen', [
 ], [(1, 102.6, 17), (2, 33, 17), (3, 50, 103.4)])
 
 LOCKED = shot('settings-locked.jpg', 'Settings, locked', [
-    ('box', 3.25, 15, 93.5, 9.5),             # 1 volume
-    ('box', 72.5, 32.4, 22.75, 9.5),          # 2 unlock
-    ('box', 3.25, 45.8, 93.5, 10.2),          # 3 reset
-    ('box', 3.25, 61.4, 93.5, 9.5),           # 4 about
-], [(1, 58, 11.3), (2, 102.6, 37), (3, 10, 51), (4, 55, 66)],
+    ('box', 3.25, 14.96, 93.5, 9.51),         # 1 volume
+    ('box', 3.25, 29.89, 93.5, 10.21),        # 2 float on top
+    ('box', 72.61, 50.95, 22.64, 9.51),       # 3 unlock
+    ('box', 3.25, 64.33, 93.5, 10.21),        # 4 reset
+], [(1, -2.6, 19.72), (2, -2.6, 35), (3, 102.6, 55.7), (4, -2.6, 69.43)],
     cap='Locked (normal)' + ms('Berkunci (biasa)'))
 
 PINPAD = shot('pinpad.jpg', 'PIN pad', [
@@ -124,23 +124,22 @@ PINPAD = shot('pinpad.jpg', 'PIN pad', [
 ], [(5, 77, 26.7)], cap='After tapping Unlock' + ms('Selepas tekan Unlock'))
 
 S_TOP = shot('settings.jpg', 'Settings unlocked, top', [
-    ('box', 67.95, 32.3, 27.3, 9.7),          # 6 lock now
-    ('box', 3.25, 49.5, 93.5, 9.7),           # 7 voice
-    ('box', 3.25, 64.3, 93.5, 10.4),          # 8 speed
-    ('box', 3.25, 79.8, 93.5, 10.4),          # 9 say the number
-], [(6, 102.6, 37.15), (7, 80, 54.35), (8, -2.6, 69.5), (9, -2.6, 85)])
+    ('box', 67.91, 50.95, 27.34, 9.51),       # 6 lock now
+    ('box', 3.25, 68.2, 93.5, 9.51),          # 7 voice
+], [(6, 102.6, 55.7), (7, -2.6, 72.96)])
 
 S_MID = shot('settings-mid.jpg', 'Settings unlocked, middle', [
-    ('box', 79.25, 33.7, 16.5, 8.9),          # 10 bell switch
-    ('box', 3.25, 48.1, 93.5, 9.7),           # 11 bell sound + test
-    ('dash', 3.25, 62.9, 93.5, 19.9),         # 12 announcement preview
-], [(10, 62, 38.15), (11, -2.6, 53), (12, -2.6, 72.8)])
+    ('box', 3.25, 16.05, 93.5, 10.21),        # 8 speed
+    ('box', 3.25, 31.55, 93.5, 10.21),        # 9 say the number
+    ('box', 79.25, 43.52, 16.5, 8.8),         # 10 bell switch
+    ('box', 3.25, 57.96, 93.5, 9.51),         # 11 bell sound + test
+    ('dash', 3.25, 72.74, 93.5, 14.5),        # 12 announcement preview
+], [(8, -2.6, 21.16), (9, -2.6, 36.65), (10, 62, 47.92), (11, -2.6, 62.71), (12, -2.6, 80)])
 
 S_BOT = shot('settings2.jpg', 'Settings unlocked, bottom', [
-    ('box', 3.25, 14.6, 93.5, 10.4),          # 13 test voice
-    ('box', 3.25, 26.3, 93.5, 10.4),          # 14 float button
-    ('box', 79.25, 36.8, 16.5, 8.9),          # 15 float switch
-], [(13, -2.6, 19.8), (14, -2.6, 31.5), (15, 62, 41.25)])
+    ('box', 3.25, 24.99, 93.5, 10.21),        # 13 test voice
+    ('box', 79.25, 36.97, 16.5, 8.8),         # 14 float at first tap
+], [(13, -2.6, 30.1), (14, 62, 41.37)])
 
 ABOUT = shot('about.jpg', 'About screen', [
     ('box', 16.5, 37.0, 66.9, 8.8),           # 1 version + created by
@@ -320,9 +319,9 @@ BODY = f"""
   </div>
   {keybox(None, cols=[
       [(1, '<b>Volume</b>: anyone can change it', 'Kelantangan: sesiapa boleh ubah'),
-       (2, '<b>Unlock</b> to change anything else', 'Tekan "Unlock" untuk ubah tetapan lain'),
-       (3, '<b>Reset to default settings</b>: tap twice, no PIN', 'Tetapkan semula: tekan dua kali, tanpa PIN')],
-      [(4, '<b>About &amp; version</b>: open to everyone', 'Terbuka untuk semua'),
+       (2, '<b>Float on top</b>: anyone can use it', 'Terapung di atas: sesiapa boleh guna')],
+      [(3, '<b>Unlock</b> to change anything else', 'Tekan "Unlock" untuk ubah tetapan lain'),
+       (4, '<b>Reset to default settings</b>: tap twice, no PIN', 'Tetapkan semula: tekan dua kali, tanpa PIN'),
        (5, 'Type the <b>PIN</b> from IT', 'Masukkan PIN daripada IT')],
   ])}
   <div class="tips">
@@ -343,11 +342,11 @@ BODY = f"""
   </div>
   {keybox(None, cols=[
       [(6, '<b>Lock now</b>', 'Kunci sekarang'), (7, '<b>Voice</b>: Clara', 'Suara: Clara'),
-       (8, '<b>Speed</b> of the words', 'Kelajuan sebutan'), (9, 'Say it 1, 2 or 3 times', 'Sebut 1, 2 atau 3 kali')],
-      [(10, '<b>Bell</b> on / off', 'Loceng hidup / mati'), (11, 'Bell sound + <b>Test</b>', 'Bunyi loceng + uji'),
-       (12, 'What will be said', 'Apa yang akan disebut')],
-      [(13, '<b>Test voice</b>', 'Uji suara'), (14, 'Open the <b>floating window</b>', 'Buka tetingkap terapung'),
-       (15, 'Float at first tap', 'Terapung pada tekanan pertama')],
+       (8, '<b>Speed</b> of the words', 'Kelajuan sebutan')],
+      [(9, 'Say it 1, 2 or 3 times', 'Sebut 1, 2 atau 3 kali'), (10, '<b>Bell</b> on / off', 'Loceng hidup / mati'),
+       (11, 'Bell sound + <b>Test</b>', 'Bunyi loceng + uji')],
+      [(12, 'What will be said', 'Apa yang akan disebut'), (13, '<b>Test voice</b>', 'Uji suara'),
+       (14, 'Float at first tap', 'Terapung pada tekanan pertama')],
   ])}
   {tip('info', 'Each PC keeps its own settings. <b>Reset to default</b> brings back: volume 100%, Normal speed, said once, bell on.', 'Setiap PC simpan tetapan sendiri. Reset kembalikan: kelantangan 100%, kelajuan Normal, sebut sekali, loceng hidup.')}
   {foot(7)}
@@ -362,7 +361,7 @@ BODY = f"""
     <div class="fix"><div class="ib"><svg class="i"><use href="#robot"/></svg></div><div><h3>Voice sounds robotic</h3><p>Open from the desktop icon, not another browser. Update Edge.{ms('Suara seperti robot: buka dari ikon desktop, bukan pelayar lain. Kemas kini Edge.')}</p></div></div>
     <div class="fix"><div class="ib"><svg class="i"><use href="#window"/></svg></div><div><h3>No floating window</h3><p>Settings → <b>Float on top of other apps</b>. Edge on a computer only.{ms('Tiada tetingkap terapung: Settings → "Float on top of other apps". Edge di komputer sahaja.')}</p></div></div>
     <div class="fix"><div class="ib"><svg class="i"><use href="#x"/></svg></div><div><h3>Announcer disappeared</h3><p>The small tab was closed. Open the app again from the desktop icon.{ms('Announcer hilang: tab kecil telah ditutup. Buka semula dari ikon desktop.')}</p></div></div>
-    <div class="fix"><div class="ib"><svg class="i"><use href="#info"/></svg></div><div><h3>Don't know the PIN</h3><p>Ask <b>IT</b>. Volume works without it.{ms('Tak tahu PIN: tanya IT. Kelantangan boleh diubah tanpa PIN.')}</p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#info"/></svg></div><div><h3>Don't know the PIN</h3><p>Ask <b>IT</b>. Volume and Float on top work without it.{ms('Tak tahu PIN: tanya IT. Kelantangan dan Float on top boleh guna tanpa PIN.')}</p></div></div>
     <div class="fix"><div class="ib"><svg class="i"><use href="#refresh"/></svg></div><div><h3>Settings changed by mistake</h3><p>Settings → <b>Reset to default settings</b>, tap it twice.{ms('Tetapan berubah: Settings → "Reset to default settings", tekan dua kali.')}</p></div></div>
     <div class="fix"><div class="ib"><svg class="i"><use href="#refresh"/></svg></div><div><h3>Need the newest version</h3><p>Close the app fully and reopen. Check <b>About &amp; version</b>.{ms('Versi terkini: tutup app sepenuhnya dan buka semula. Semak "About &amp; version".')}</p></div></div>
   </div>
