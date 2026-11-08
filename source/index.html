@@ -289,7 +289,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
         <div class="stack" id="lockedArea" hidden>
         <div class="field">
           <span class="label">Voice</span>
-          <div class="voice-box"><span id="voiceName">Ava · US English</span></div>
+          <div class="voice-box"><span id="voiceName">Clara · Canada English</span></div>
           <span class="hint" id="voiceHint" hidden></span>
         </div>
 
@@ -398,6 +398,14 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Newest first. Add each new version ON TOP; never delete or edit older entries (they are the history).
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
+    {
+      version: '1.3.0', date: '8 Nov 2026',
+      notes: [
+        'New voice: Clara (Canada English)',
+        'Settings lock: a PIN is needed to change settings; volume stays open for everyone',
+        'Settings lock again when you leave Settings, or after 2 minutes'
+      ]
+    },
     {
       version: '1.2.1', date: '6 Nov 2026',
       notes: [
@@ -598,9 +606,9 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   var inFrame = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
 
   // ---------- voices ----------
-  // The app uses one voice: Ava. If a PC doesn't have Ava, it falls back down this list (Jenny next).
+  // The app uses one voice: Clara (Canada English). If a PC doesn't have Clara, it falls back down this list (Ava next).
   // To change the voice for every PC, move a different name to the front.
-  var NATURAL_FEMALE = ['Ava', 'Jenny', 'Aria', 'Emma', 'Michelle', 'Sonia', 'Libby', 'Natasha', 'Clara', 'Luna', 'Emily', 'Molly', 'Leah', 'Neerja', 'Rosa'];
+  var NATURAL_FEMALE = ['Clara', 'Ava', 'Jenny', 'Aria', 'Emma', 'Michelle', 'Sonia', 'Libby', 'Natasha', 'Luna', 'Emily', 'Molly', 'Leah', 'Neerja', 'Rosa'];
   var FALLBACK_FEMALE = [/Google UK English Female/i, /Samantha/i, /Zira/i, /Hazel/i, /Susan/i, /Karen/i, /Moira/i, /Tessa/i, /Google US English/i];
   var REGION = { US: 'US', GB: 'UK', AU: 'Australia', CA: 'Canada', SG: 'Singapore', IE: 'Ireland', NZ: 'New Zealand', ZA: 'South Africa', IN: 'India', PH: 'Philippines' };
   var voices = [], voicesNatural = false;
@@ -1026,13 +1034,13 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     });
   }
   function renderVoices() {
-    var v = pickVoice(), isAva = !!(v && /\bAva/.test(v.name) && /Online|Natural/i.test(v.name));
+    var v = pickVoice(), isMain = !!(v && /\bClara/.test(v.name) && /Online|Natural/i.test(v.name));
     els.voiceName.textContent = v ? voiceLabel(v) : 'Default voice';
-    if (isAva) { els.voiceHint.hidden = true; return; }
+    if (isMain) { els.voiceHint.hidden = true; return; }
     els.voiceHint.hidden = false;
     els.voiceHint.textContent = voicesNatural
-      ? "Ava isn't on this PC yet, so a similar voice is used. Updating Microsoft Edge usually adds Ava."
-      : 'For the Ava voice, open this app in Microsoft Edge.';
+      ? "Clara isn't on this PC yet, so a similar voice is used. Updating Microsoft Edge usually adds Clara."
+      : 'For the Clara voice, open this app in Microsoft Edge.';
   }
   function renderSettings() {
     Array.prototype.forEach.call(appEl.querySelectorAll('[data-speed]'), function (b) { b.setAttribute('aria-pressed', String(b.dataset.speed === settings.speed)); });

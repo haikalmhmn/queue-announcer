@@ -31,6 +31,11 @@ Every release, before it goes online:
 
 ---
 
+## 1.3.0 — 8 Nov 2026
+- New voice: Clara (Canada English)
+- Settings lock: a PIN is needed to change settings; volume stays open for everyone
+- Settings lock again when you leave Settings, or after 2 minutes
+
 ## 1.2.1 — 6 Nov 2026
 - Back to the calm announcement: "A, 1, 0, 5. Please collect your order."
 - The order code is always read one character at a time, at a steady pace

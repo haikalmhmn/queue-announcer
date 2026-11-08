@@ -141,6 +141,35 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
 .link-row{min-height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-radius:12px;background:var(--surface);font-size:15px;text-align:left}
 .link-row span{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px}
 
+/* Settings lock */
+.lock-card{display:flex;align-items:center;gap:12px;min-height:60px;padding:8px 6px 8px 14px;border-radius:12px;background:var(--surface)}
+.lock-card.open{background:var(--teal-tint)}
+.lock-ic{color:var(--muted);display:grid;place-items:center}
+.lock-card.open .lock-ic{color:var(--teal)}
+.lock-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.lock-title{font-size:15px;font-weight:600}
+.lock-card.open .lock-title{color:var(--teal-text)}
+.lock-card.open .hint{color:var(--teal-sub)}
+.lock-btn{height:48px;padding:0 16px;border-radius:10px;border:1px solid var(--teal);color:var(--teal);font-size:15px;font-weight:600;flex-shrink:0}
+.pinpad{position:absolute;inset:0;z-index:6;background:var(--bg);display:flex;align-items:center;justify-content:center;padding-block:12px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.pin-inner{width:100%;max-width:320px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.pin-lock{color:var(--teal)}
+.pinpad h2{margin:0;font-family:var(--display);font-size:22px}
+.pin-dots{display:flex;gap:12px;height:18px;align-items:center}
+.pin-dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);box-sizing:border-box}
+.pin-dots i.on{background:var(--teal);border-color:var(--teal)}
+.pin-dots.bad i{border-color:var(--red);background:var(--red)}
+.pin-msg{font-size:13px;color:var(--muted);min-height:18px}
+.pin-msg.bad{color:var(--red-text)}
+.pin-keys{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pin-keys .key{height:56px;border-radius:12px;background:var(--key);font-family:var(--display);font-size:24px;font-weight:700}
+.pin-keys .key.soft{background:var(--key-soft);color:var(--muted);display:grid;place-items:center}
+.pin-keys .key.blank{visibility:hidden}
+.pin-cancel{width:100%;height:48px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pin-dots.bad{animation:shake .25s 2}
+@media (prefers-reduced-motion: reduce){.pin-dots.bad{animation:none}}
+
 /* About */
 .about-id{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 0 4px}
 .app-icon{width:96px;height:96px;display:block}
@@ -250,12 +279,6 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     <div class="scroll">
       <div class="stack">
         <div class="field">
-          <span class="label">Voice</span>
-          <div class="voice-box"><span id="voiceName">Ava · US English</span></div>
-          <span class="hint" id="voiceHint" hidden></span>
-        </div>
-
-        <div class="field">
           <div class="label-row"><label class="label" for="volRange">Announcement volume</label><span class="vol-val" id="volVal">100%</span></div>
           <div class="vol-row">
             <button type="button" class="btn vol-btn" data-action="vol-down" aria-label="Lower volume">−</button>
@@ -263,6 +286,19 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
             <button type="button" class="btn vol-btn" data-action="vol-up" aria-label="Raise volume">+</button>
           </div>
           <span class="hint">Only changes this app's sound, not your PC volume.</span>
+        </div>
+
+        <div class="lock-card" id="lockCard">
+          <span class="lock-ic" id="lockIc"></span>
+          <div class="lock-text"><span class="lock-title" id="lockTitle">Other settings are locked</span><span class="hint" id="lockSub">Ask IT for the PIN to change them.</span></div>
+          <button type="button" class="btn lock-btn" id="lockBtn" data-action="lock-toggle">Unlock</button>
+        </div>
+
+        <div class="stack" id="lockedArea" hidden>
+        <div class="field">
+          <span class="label">Voice</span>
+          <div class="voice-box"><span id="voiceName">Clara · Canada English</span></div>
+          <span class="hint" id="voiceHint" hidden></span>
         </div>
 
         <div class="field">
@@ -318,6 +354,8 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
           <span class="hint">The floating window stays above other apps. Works in Microsoft Edge or Chrome on a computer.</span>
         </div>
 
+        </div>
+
         <button type="button" class="btn link-row" data-go="about">About &amp; version <span><span id="verSmall"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg></span></button>
       </div>
     </div>
@@ -347,6 +385,17 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     <button type="button" class="btn back-bar" data-go="settings"></button>
   </section>
 
+  <div class="pinpad" id="pinPad" role="dialog" aria-modal="true" aria-labelledby="pinTitle" hidden>
+    <div class="pin-inner">
+      <span class="pin-lock" id="pinLockIc"></span>
+      <h2 id="pinTitle">Enter PIN</h2>
+      <div class="pin-dots" id="pinDots" aria-hidden="true"></div>
+      <span class="pin-msg" id="pinMsg" role="status" aria-live="polite">To change settings</span>
+      <div class="pin-keys" id="pinKeys"></div>
+      <button type="button" class="btn ghost-btn pin-cancel" data-action="pin-cancel">Cancel</button>
+    </div>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 </div>
 
@@ -357,6 +406,14 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Newest first. Add each new version ON TOP; never delete or edit older entries (they are the history).
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
+    {
+      version: '1.3.0', date: '8 Nov 2026',
+      notes: [
+        'New voice: Clara (Canada English)',
+        'Settings lock: a PIN is needed to change settings; volume stays open for everyone',
+        'Settings lock again when you leave Settings, or after 2 minutes'
+      ]
+    },
     {
       version: '1.2.1', date: '6 Nov 2026',
       notes: [
@@ -557,9 +614,9 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   var inFrame = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
 
   // ---------- voices ----------
-  // The app uses one voice: Ava. If a PC doesn't have Ava, it falls back down this list (Jenny next).
+  // The app uses one voice: Clara (Canada English). If a PC doesn't have Clara, it falls back down this list (Ava next).
   // To change the voice for every PC, move a different name to the front.
-  var NATURAL_FEMALE = ['Ava', 'Jenny', 'Aria', 'Emma', 'Michelle', 'Sonia', 'Libby', 'Natasha', 'Clara', 'Luna', 'Emily', 'Molly', 'Leah', 'Neerja', 'Rosa'];
+  var NATURAL_FEMALE = ['Clara', 'Ava', 'Jenny', 'Aria', 'Emma', 'Michelle', 'Sonia', 'Libby', 'Natasha', 'Luna', 'Emily', 'Molly', 'Leah', 'Neerja', 'Rosa'];
   var FALLBACK_FEMALE = [/Google UK English Female/i, /Samantha/i, /Zira/i, /Hazel/i, /Susan/i, /Karen/i, /Moira/i, /Tessa/i, /Google US English/i];
   var REGION = { US: 'US', GB: 'UK', AU: 'Australia', CA: 'Canada', SG: 'Singapore', IE: 'Ireland', NZ: 'New Zealand', ZA: 'South Africa', IN: 'India', PH: 'Philippines' };
   var voices = [], voicesNatural = false;
@@ -870,6 +927,79 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     });
   }
 
+  // ---------- settings lock ----------
+  // One PIN for every PC. Only its SHA-256 hash (with the salt) is stored here.
+  // To change the PIN: python3 tools/set_pin.py <new PIN>, then release a new version.
+  var PIN_SALT = 'queue-announcer:foodle:';
+  var PIN_LENGTH = 6;
+  var PIN_HASH = 'b657048a93033a0fe146abcff246ee0370d736835b02bcc133e8f090a3773c5a';
+  var AUTO_LOCK_MS = 2 * 60 * 1000;
+  var unlocked = false, pinEntry = '', pinFails = 0, pinBlockedUntil = 0, autoLockT = null;
+  var LOCK_ICON = '<rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path>';
+  var UNLOCK_ICON = '<rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 7.5-2"></path>';
+  function sha256Hex(text) {
+    var data = new TextEncoder().encode(text);
+    return crypto.subtle.digest('SHA-256', data).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+    });
+  }
+  function setUnlocked(v) {
+    unlocked = v; clearTimeout(autoLockT);
+    if (v) autoLockT = setTimeout(function () { setUnlocked(false); }, AUTO_LOCK_MS);
+    renderLock();
+  }
+  function bumpAutoLock() { if (unlocked) { clearTimeout(autoLockT); autoLockT = setTimeout(function () { setUnlocked(false); }, AUTO_LOCK_MS); } }
+  function renderLock() {
+    $('lockedArea').hidden = !unlocked;
+    var card = $('lockCard');
+    card.classList.toggle('open', unlocked);
+    $('lockIc').innerHTML = ic(unlocked ? UNLOCK_ICON : LOCK_ICON, 22);
+    $('lockTitle').textContent = unlocked ? 'Settings unlocked' : 'Other settings are locked';
+    $('lockSub').textContent = unlocked ? 'Locks again when you leave, or after 2 minutes.' : 'Ask IT for the PIN to change them.';
+    $('lockBtn').textContent = unlocked ? 'Lock now' : 'Unlock';
+  }
+  function openPinPad() {
+    pinEntry = ''; $('pinPad').hidden = false; renderPin(Date.now() < pinBlockedUntil ? 'blocked' : '');
+  }
+  function closePinPad() { $('pinPad').hidden = true; pinEntry = ''; }
+  function renderPin(state) {
+    var dots = $('pinDots'); dots.innerHTML = '';
+    for (var i = 0; i < PIN_LENGTH; i++) { var d = document.createElement('i'); if (i < pinEntry.length) d.className = 'on'; dots.appendChild(d); }
+    dots.classList.toggle('bad', state === 'bad');
+    var msg = $('pinMsg');
+    msg.classList.toggle('bad', state === 'bad' || state === 'blocked');
+    if (state === 'bad') msg.textContent = 'Wrong PIN. Try again.';
+    else if (state === 'blocked') msg.textContent = 'Too many tries. Wait ' + Math.ceil((pinBlockedUntil - Date.now()) / 1000) + ' seconds.';
+    else msg.textContent = 'To change settings';
+  }
+  function pinKey(k) {
+    if (Date.now() < pinBlockedUntil) { renderPin('blocked'); return; }
+    if (k === 'del') { pinEntry = pinEntry.slice(0, -1); renderPin(''); return; }
+    if (pinEntry.length >= PIN_LENGTH) return;
+    pinEntry += k; renderPin('');
+    if (pinEntry.length === PIN_LENGTH) checkPin();
+  }
+  function checkPin() {
+    var tryPin = pinEntry;
+    sha256Hex(PIN_SALT + tryPin).then(function (h) {
+      if (h === PIN_HASH) { pinFails = 0; closePinPad(); setUnlocked(true); toast('Settings unlocked'); return; }
+      pinFails++; pinEntry = '';
+      if (pinFails >= 5) { pinFails = 0; pinBlockedUntil = Date.now() + 30000; renderPin('blocked'); setTimeout(function () { if (!$('pinPad').hidden) renderPin(''); }, 30100); }
+      else renderPin('bad');
+    }).catch(function () { pinEntry = ''; renderPin('bad'); });
+  }
+  (function buildPinKeys() {
+    var wrap = $('pinKeys');
+    ['1','2','3','4','5','6','7','8','9','blank','0','del'].forEach(function (k) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn key';
+      if (k === 'blank') { b.className += ' blank'; b.tabIndex = -1; b.setAttribute('aria-hidden', 'true'); }
+      else if (k === 'del') { b.className += ' soft'; b.dataset.pin = 'del'; b.setAttribute('aria-label', 'Delete'); b.innerHTML = ic(I.del, 24); }
+      else { b.dataset.pin = k; b.textContent = k; }
+      wrap.appendChild(b);
+    });
+    $('pinLockIc').innerHTML = ic(LOCK_ICON, 32);
+  })();
+
   // ---------- render ----------
   function renderMain() {
     els.nowNum.textContent = state.current || '—';
@@ -912,13 +1042,13 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     });
   }
   function renderVoices() {
-    var v = pickVoice(), isAva = !!(v && /\bAva/.test(v.name) && /Online|Natural/i.test(v.name));
+    var v = pickVoice(), isMain = !!(v && /\bClara/.test(v.name) && /Online|Natural/i.test(v.name));
     els.voiceName.textContent = v ? voiceLabel(v) : 'Default voice';
-    if (isAva) { els.voiceHint.hidden = true; return; }
+    if (isMain) { els.voiceHint.hidden = true; return; }
     els.voiceHint.hidden = false;
     els.voiceHint.textContent = voicesNatural
-      ? "Ava isn't on this PC yet, so a similar voice is used. Updating Microsoft Edge usually adds Ava."
-      : 'For the Ava voice, open this app in Microsoft Edge.';
+      ? "Clara isn't on this PC yet, so a similar voice is used. Updating Microsoft Edge usually adds Clara."
+      : 'For the Clara voice, open this app in Microsoft Edge.';
   }
   function renderSettings() {
     Array.prototype.forEach.call(appEl.querySelectorAll('[data-speed]'), function (b) { b.setAttribute('aria-pressed', String(b.dataset.speed === settings.speed)); });
@@ -966,6 +1096,8 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   }
   function renderAll() { renderMain(); renderRecent(); renderSettings(); renderAbout(); }
   function show(view) {
+    if (unlocked && view !== 'settings' && view !== 'about') setUnlocked(false);
+    if (view !== 'settings') closePinPad();
     state.view = view;
     ['main', 'recent', 'settings', 'about'].forEach(function (v) { $('view-' + v).hidden = v !== view; });
     if (view === 'about' && state.update.status === 'idle') checkUpdate(false);
@@ -990,6 +1122,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
 
   var firstTap = true;
   appEl.addEventListener('pointerdown', function (e) {
+    if (state.view === 'settings' || state.view === 'about') bumpAutoLock();
     var b = e.target.closest('.btn');
     if (b && !b.disabled) {
       b.classList.add('is-pressed');
@@ -1014,6 +1147,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   appEl.addEventListener('click', function (e) {
     var b = e.target.closest('button');
     if (!b || b.disabled) return;
+    if (b.dataset.pin) { pinKey(b.dataset.pin); return; }
     if (b.dataset.key) { typeChar(b.dataset.key); return; }
     if (b.dataset.go) { show(b.dataset.go); return; }
     if (b.dataset.speed) { settings.speed = b.dataset.speed; saveSettings(); renderSettings(); return; }
@@ -1038,6 +1172,10 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       case 'vol-up':
         settings.volume = Math.max(10, Math.min(100, settings.volume + (b.dataset.action === 'vol-up' ? 10 : -10)));
         saveSettings(); renderSettings(); previewVolume(); break;
+      case 'lock-toggle':
+        if (unlocked) { setUnlocked(false); toast('Settings locked'); } else openPinPad();
+        break;
+      case 'pin-cancel': closePinPad(); break;
       case 'bell-test':
         if (state.speaking || bellTesting) return;
         bellTesting = true; renderSettings();
@@ -1065,6 +1203,12 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
 
   function onKey(e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (!$('pinPad').hidden) {
+      if (/^[0-9]$/.test(e.key)) { pinKey(e.key); e.preventDefault(); }
+      else if (e.key === 'Backspace') { pinKey('del'); e.preventDefault(); }
+      else if (e.key === 'Escape') closePinPad();
+      return;
+    }
     if (e.target && e.target.tagName === 'SELECT') return;
     if (state.view !== 'main') { if (e.key === 'Escape') show('main'); return; }
     var k = e.key;
@@ -1091,6 +1235,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   }
 
   loadBell();
+  renderLock();
   renderAll();
   show('main');
 })();
