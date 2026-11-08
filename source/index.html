@@ -51,9 +51,8 @@ select:focus,select:focus-visible{outline:none}
 .clear-btn:not(:disabled):active,.clear-btn.is-pressed:not(:disabled){background:var(--red);color:var(--on-accent)}
 
 /* Main: keypad */
-/* When the window is short, the keypad scrolls inside its own space instead of covering Now calling and the number field. */
-.pad{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior:contain}
-.pad::-webkit-scrollbar{display:none}
+/* The keypad never spills over Now calling or the number field. If the window is made too small, the app grows it back (see growToFit). */
+.pad{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0;overflow:hidden}
 .pad>.letters{margin-top:auto}
 .letters{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
 .krow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
@@ -423,7 +422,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       version: '1.4.1', date: '8 Nov 2026',
       notes: [
         'About page shows who created the app',
-        'Small credit line at the bottom of Settings', 'Back button on Recent now points right, towards the main page', 'Shorter pause between the order code and "Please collect your order"', 'Float on top of other apps button no longer needs the PIN', 'In a small window the keypad scrolls instead of covering the number'
+        'Small credit line at the bottom of Settings', 'Back button on Recent now points right, towards the main page', 'Shorter pause between the order code and "Please collect your order"', 'Float on top of other apps button no longer needs the PIN', 'The window can\'t be made smaller than the keypad needs; it grows back'
       ]
     },
     {
@@ -883,6 +882,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       pw.document.documentElement.style.height = '100%';
       pw.document.body.appendChild(appEl);
       pw.document.addEventListener('keydown', onKey);
+      keepMinSize(pw);
       els.popped.hidden = false;
       tuckMain();
       placeFloating(pw);
@@ -937,6 +937,28 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     }
     setTimeout(attempt, delays[0]);
   }
+  // Smallest size: if a window is dragged smaller than the main page needs, grow it back.
+  // Works in the installed app and the floating window (no scrolling on the main page).
+  var MIN_W = 360;
+  function keepMinSize(win) {
+    var t = null;
+    win.addEventListener('resize', function () {
+      clearTimeout(t);
+      t = setTimeout(function () { growToFit(win); }, 300);
+    });
+  }
+  function growToFit(win) {
+    if (!win || win.closed) return;
+    if (win === window && (pipWin || savedWin)) return;      // main window is tucked away as a small tab
+    if (appEl.ownerDocument.defaultView !== win) return;     // the app is showing in the other window
+    if (win === window && !isInstalledApp()) return;          // a normal browser tab can't be resized
+    if (state.view !== 'main') return;
+    var pad = appEl.querySelector('.pad');
+    var needH = Math.max(0, pad.scrollHeight - pad.clientHeight), needW = Math.max(0, MIN_W - win.innerWidth);
+    if (!needH && !needW) return;
+    try { win.resizeTo(win.outerWidth + needW, win.outerHeight + needH + 2); } catch (e) {}
+  }
+  keepMinSize(window);
   function untuckMain() {
     if (!savedWin) return;
     try { window.resizeTo(savedWin.w, savedWin.h); window.moveTo(savedWin.x, savedWin.y); } catch (e) {}
@@ -1157,6 +1179,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     state.view = view;
     ['main', 'recent', 'settings', 'about'].forEach(function (v) { $('view-' + v).hidden = v !== view; });
     if (view === 'about' && state.update.status === 'idle') checkUpdate(false);
+    if (view === 'main') setTimeout(function () { growToFit(appEl.ownerDocument.defaultView); }, 50);
   }
 
   // ---------- input ----------

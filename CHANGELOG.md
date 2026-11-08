@@ -37,7 +37,7 @@ Every release, before it goes online:
 - Back button on Recent now points right, towards the main page
 - Shorter pause between the order code and "Please collect your order"
 - Float on top of other apps button no longer needs the PIN
-- In a small window the keypad scrolls instead of covering the number
+- The window can't be made smaller than the keypad needs; it grows back
 
 ## 1.4.0 — 8 Nov 2026
 - New Reset to default settings button in Settings (no PIN needed)
