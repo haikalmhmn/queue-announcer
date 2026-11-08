@@ -163,6 +163,10 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
 .pin-dots.bad{animation:shake .25s 2}
 @media (prefers-reduced-motion: reduce){.pin-dots.bad{animation:none}}
 
+/* Reset to defaults */
+.reset-btn{height:52px}
+.reset-btn.confirm{border-color:var(--red);background:var(--red-tint);color:#FF8A84}
+
 /* About */
 .about-id{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 0 4px}
 .app-icon{width:96px;height:96px;display:block}
@@ -348,6 +352,11 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
 
         </div>
 
+        <div class="field">
+          <button type="button" class="btn ghost-btn reset-btn" id="resetBtn" data-action="reset"></button>
+          <span class="hint" id="resetHint">Volume 100%, Normal speed, said once, Foodle bell on.</span>
+        </div>
+
         <button type="button" class="btn link-row" data-go="about">About &amp; version <span><span id="verSmall"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg></span></button>
       </div>
     </div>
@@ -398,6 +407,14 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Newest first. Add each new version ON TOP; never delete or edit older entries (they are the history).
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
+    {
+      version: '1.4.0', date: '8 Nov 2026',
+      notes: [
+        'New Reset to default settings button in Settings (no PIN needed)',
+        'New defaults: Normal speed, number said once',
+        'Every PC starts from the default settings with this version'
+      ]
+    },
     {
       version: '1.3.0', date: '8 Nov 2026',
       notes: [
@@ -505,7 +522,19 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     get: function (k, d) { try { var v = localStorage.getItem('qa:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
     set: function (k, v) { try { localStorage.setItem('qa:' + k, JSON.stringify(v)); } catch (e) {} }
   };
-  var settings = Object.assign({ voice: '', speed: 'calm', times: 2, chime: true, bell: 'foodle', volume: 100, muted: false, autoPop: true }, store.get('settings', {}));
+  // Default settings for every PC. Staff can change them per PC; "Reset to default settings" brings them back.
+  var DEFAULTS = { speed: 'normal', times: 1, chime: true, bell: 'foodle', volume: 100, muted: false, autoPop: true };
+  // Raise DEFAULTS_REV to put every PC back on the defaults once, when that version arrives.
+  var DEFAULTS_REV = 1;
+  var settings = (function () {
+    var saved = store.get('settings', {});
+    if (saved.defaultsRev !== DEFAULTS_REV) {
+      var fresh = Object.assign({}, DEFAULTS, { defaultsRev: DEFAULTS_REV });
+      store.set('settings', fresh);
+      return fresh;
+    }
+    return Object.assign({}, DEFAULTS, saved);
+  })();
   function saveSettings() { store.set('settings', settings); }
 
   function todayKey() { return new Date().toDateString(); }
@@ -992,6 +1021,13 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     $('pinLockIc').innerHTML = ic(LOCK_ICON, 32);
   })();
 
+  var resetArmed = false, resetT = null;
+  function renderReset() {
+    var b = $('resetBtn');
+    b.classList.toggle('confirm', resetArmed);
+    b.innerHTML = ic(I.refresh, 18) + (resetArmed ? 'Tap again to reset' : 'Reset to default settings');
+  }
+
   // ---------- render ----------
   function renderMain() {
     els.nowNum.textContent = state.current || '—';
@@ -1086,9 +1122,10 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     els.checkBtn.disabled = u.status === 'checking';
     els.lastChecked.textContent = u.last ? 'Last checked: ' + u.last : 'Not checked yet';
   }
-  function renderAll() { renderMain(); renderRecent(); renderSettings(); renderAbout(); }
+  function renderAll() { renderMain(); renderRecent(); renderSettings(); renderAbout(); renderReset(); }
   function show(view) {
     if (unlocked && view !== 'settings' && view !== 'about') setUnlocked(false);
+    if (resetArmed) { resetArmed = false; renderReset(); }
     if (view !== 'settings') closePinPad();
     state.view = view;
     ['main', 'recent', 'settings', 'about'].forEach(function (v) { $('view-' + v).hidden = v !== view; });
@@ -1164,6 +1201,17 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       case 'vol-up':
         settings.volume = Math.max(10, Math.min(100, settings.volume + (b.dataset.action === 'vol-up' ? 10 : -10)));
         saveSettings(); renderSettings(); previewVolume(); break;
+      case 'reset':
+        if (!resetArmed) {
+          resetArmed = true; renderReset();
+          clearTimeout(resetT); resetT = setTimeout(function () { resetArmed = false; renderReset(); }, 4000);
+        } else {
+          resetArmed = false; clearTimeout(resetT);
+          var keepRev = settings.defaultsRev;
+          settings = Object.assign({}, DEFAULTS, { defaultsRev: keepRev });
+          saveSettings(); renderAll(); toast('Settings reset to default');
+        }
+        break;
       case 'lock-toggle':
         if (unlocked) { setUnlocked(false); toast('Settings locked'); } else openPinPad();
         break;

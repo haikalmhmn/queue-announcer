@@ -31,6 +31,11 @@ Every release, before it goes online:
 
 ---
 
+## 1.4.0 — 8 Nov 2026
+- New Reset to default settings button in Settings (no PIN needed)
+- New defaults: Normal speed, number said once
+- Every PC starts from the default settings with this version
+
 ## 1.3.0 — 8 Nov 2026
 - New voice: Clara (Canada English)
 - Settings lock: a PIN is needed to change settings; volume stays open for everyone
