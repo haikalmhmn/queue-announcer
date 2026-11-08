@@ -7,7 +7,7 @@ import os
 import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-VERSION = "1.4.1"
+VERSION = "1.4.2"
 CREATED = "6 Nov 2026"
 NAME = "Queue Announcer"
 

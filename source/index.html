@@ -58,8 +58,8 @@ select:focus,select:focus-visible{outline:none}
 .krow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .krow.short .key:first-child{grid-column-start:2}
 .digits{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;flex-shrink:0}
-.key{height:44px;border-radius:9px;background:var(--surface);font-family:var(--display);font-size:19px;font-weight:700;color:var(--fg)}
-.digits .key{height:52px;border-radius:10px;background:var(--key);font-size:22px}
+.key{height:var(--kh,44px);border-radius:9px;background:var(--surface);font-family:var(--display);font-size:19px;font-weight:700;color:var(--fg)}
+.digits .key{height:var(--dh,52px);border-radius:10px;background:var(--key);font-size:22px}
 .digits .key.soft{background:var(--key-soft);color:var(--muted);display:grid;place-items:center}
 
 /* Main: actions */
@@ -418,6 +418,10 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   // Newest first. Add each new version ON TOP; never delete or edit older entries (they are the history).
   // Version rule: see CHANGELOG.md. Keep version.json and CHANGELOG.md matching the top entry.
   var RELEASES = [
+    {
+      version: '1.4.2', date: '9 Nov 2026',
+      notes: ['The floating window also keeps the keypad clear of the order number: it grows back, or the keys shrink to fit until the next tap']
+    },
     {
       version: '1.4.1', date: '8 Nov 2026',
       notes: [
@@ -883,6 +887,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       pw.document.body.appendChild(appEl);
       pw.document.addEventListener('keydown', onKey);
       keepMinSize(pw);
+      setTimeout(function () { growToFit(pw); }, 400);
       els.popped.hidden = false;
       tuckMain();
       placeFloating(pw);
@@ -891,6 +896,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
         document.body.appendChild(appEl);
         pipWin = null; renderSettings();
         untuckMain();
+        setTimeout(function () { growToFit(window); }, 400);
       });
       renderSettings();
     }).catch(function () {
@@ -937,9 +943,25 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     }
     setTimeout(attempt, delays[0]);
   }
-  // Smallest size: if a window is dragged smaller than the main page needs, grow it back.
-  // Works in the installed app and the floating window (no scrolling on the main page).
-  var MIN_W = 360;
+  // Smallest size: if a window (main or floating) is dragged smaller than the keypad needs, grow it back.
+  // If the browser refuses (the floating window can need a tap first), the keys shrink to fit so they
+  // never spill over Now calling or the number field, and the next tap grows the window back.
+  var MIN_W = 360, keysShrunk = false;
+  function padDeficit() {
+    var pad = appEl.querySelector('.pad');
+    return Math.max(0, pad.scrollHeight - pad.clientHeight);
+  }
+  function setKeyScale(k) {
+    keysShrunk = k < 1;
+    appEl.style.setProperty('--kh', k < 1 ? Math.floor(44 * k) + 'px' : '');
+    appEl.style.setProperty('--dh', k < 1 ? Math.floor(52 * k) + 'px' : '');
+  }
+  function fitKeys() {
+    if (state.view !== 'main') return;
+    setKeyScale(1);
+    var d = padDeficit();
+    if (d > 0) setKeyScale(Math.max(0.5, (280 - d - 2) / 280));   // 4 letter rows x 44 + 2 number rows x 52 = 280
+  }
   function keepMinSize(win) {
     var t = null;
     win.addEventListener('resize', function () {
@@ -949,14 +971,16 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
   }
   function growToFit(win) {
     if (!win || win.closed) return;
-    if (win === window && (pipWin || savedWin)) return;      // main window is tucked away as a small tab
     if (appEl.ownerDocument.defaultView !== win) return;     // the app is showing in the other window
-    if (win === window && !isInstalledApp()) return;          // a normal browser tab can't be resized
     if (state.view !== 'main') return;
-    var pad = appEl.querySelector('.pad');
-    var needH = Math.max(0, pad.scrollHeight - pad.clientHeight), needW = Math.max(0, MIN_W - win.innerWidth);
-    if (!needH && !needW) return;
-    try { win.resizeTo(win.outerWidth + needW, win.outerHeight + needH + 2); } catch (e) {}
+    setKeyScale(1);
+    var tucked = win === window && (pipWin || savedWin);      // main window is a small tab while floating
+    var canSize = win !== window || isInstalledApp();          // a normal browser tab can't be resized
+    var needH = padDeficit(), needW = Math.max(0, MIN_W - win.innerWidth);
+    if ((needH || needW) && canSize && !tucked) {
+      try { win.resizeTo(win.outerWidth + needW, win.outerHeight + needH + 2); } catch (e) {}
+    }
+    setTimeout(fitKeys, 150);                                  // if it didn't grow, shrink the keys instead
   }
   keepMinSize(window);
   function untuckMain() {
@@ -1219,6 +1243,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
     var pressed = appEl.querySelectorAll('.is-pressed');
     setTimeout(function () { Array.prototype.forEach.call(pressed, function (b) { b.classList.remove('is-pressed'); }); }, 90);
   }
+  appEl.addEventListener('pointerup', function () { if (keysShrunk) growToFit(appEl.ownerDocument.defaultView); });
   appEl.addEventListener('pointerup', release);
   appEl.addEventListener('pointercancel', release);
   appEl.addEventListener('pointerleave', release);

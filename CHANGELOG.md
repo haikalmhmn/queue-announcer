@@ -31,6 +31,9 @@ Every release, before it goes online:
 
 ---
 
+## 1.4.2 — 9 Nov 2026
+- The floating window also keeps the keypad clear of the order number: it grows back, or the keys shrink to fit until the next tap
+
 ## 1.4.1 — 8 Nov 2026
 - About page shows who created the app
 - Small credit line at the bottom of Settings
