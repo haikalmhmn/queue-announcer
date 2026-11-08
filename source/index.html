@@ -51,7 +51,10 @@ select:focus,select:focus-visible{outline:none}
 .clear-btn:not(:disabled):active,.clear-btn.is-pressed:not(:disabled){background:var(--red);color:var(--on-accent)}
 
 /* Main: keypad */
-.pad{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;min-height:0}
+/* When the window is short, the keypad scrolls inside its own space instead of covering Now calling and the number field. */
+.pad{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior:contain}
+.pad::-webkit-scrollbar{display:none}
+.pad>.letters{margin-top:auto}
 .letters{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
 .krow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .krow.short .key:first-child{grid-column-start:2}
@@ -420,7 +423,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       version: '1.4.1', date: '8 Nov 2026',
       notes: [
         'About page shows who created the app',
-        'Small credit line at the bottom of Settings', 'Back button on Recent now points right, towards the main page', 'Shorter pause between the order code and "Please collect your order"', 'Float on top of other apps button no longer needs the PIN'
+        'Small credit line at the bottom of Settings', 'Back button on Recent now points right, towards the main page', 'Shorter pause between the order code and "Please collect your order"', 'Float on top of other apps button no longer needs the PIN', 'In a small window the keypad scrolls instead of covering the number'
       ]
     },
     {
