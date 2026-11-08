@@ -295,6 +295,11 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
           <span class="hint">Only changes this app's sound, not your PC volume.</span>
         </div>
 
+        <div class="field">
+          <button type="button" class="btn ghost-btn" id="popBtn" data-action="pop"></button>
+          <span class="hint">The floating window stays above other apps. Works in Microsoft Edge or Chrome on a computer.</span>
+        </div>
+
         <div class="lock-card" id="lockCard">
           <span class="lock-ic" id="lockIc"></span>
           <div class="lock-text"><span class="lock-title" id="lockTitle">Other settings are locked</span><span class="hint" id="lockSub">Ask IT for the PIN to change them.</span></div>
@@ -353,12 +358,11 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
         <button type="button" class="btn outline-btn" id="testBtn" data-action="test"></button>
 
         <div class="field">
-          <button type="button" class="btn ghost-btn" id="popBtn" data-action="pop"></button>
           <div class="switch-row">
             <span id="autoPopLbl">Float on top at first tap</span>
             <button type="button" class="btn switch" role="switch" id="autoPopSw" data-action="autopop" aria-labelledby="autoPopLbl"><span class="track"><span class="knob"></span></span></button>
           </div>
-          <span class="hint">The floating window stays above other apps. Works in Microsoft Edge or Chrome on a computer.</span>
+          <span class="hint">Opens the floating window by itself the first time the screen is tapped.</span>
         </div>
 
         </div>
@@ -424,7 +428,7 @@ input[type=range]:focus-visible{outline:3px solid var(--teal);outline-offset:2px
       version: '1.4.1', date: '8 Nov 2026',
       notes: [
         'About page shows who created the app',
-        'Small credit line at the bottom of Settings', 'Back button on Recent now points right, towards the main page', 'Shorter pause between the order code and "Please collect your order"'
+        'Small credit line at the bottom of Settings', 'Back button on Recent now points right, towards the main page', 'Shorter pause between the order code and "Please collect your order"', 'Float on top of other apps button no longer needs the PIN'
       ]
     },
     {
