@@ -131,6 +131,31 @@ kbd { font-family: Inter, sans-serif; font-size: 8.3pt; font-weight: 600; border
 .q { background: var(--dark); color: #F5F6F8; border-radius: 3mm; padding: 3.5mm; display: flex; flex-direction: column; gap: 1.5mm; }
 .q span { font-size: 8.5pt; color: #A3AAB6; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
 .q b { font-size: 10.5pt; color: var(--teal-bright); }
+
+/* Foodle additions: Malay lines, outlined markers, Key boxes */
+.ms { display: block; font-weight: 400; color: var(--muted); font-size: 8.6pt; font-style: italic; margin-top: .4mm; line-height: 1.35; }
+.intro .ms { font-size: 10pt; margin-top: 2mm; }
+h3 .ms, h2 .ms { display: inline; font-size: 10pt; margin-left: 2mm; }
+.mark { position: absolute; border: 2px solid var(--red); border-radius: 2mm; pointer-events: none; }
+.mark.round { border-radius: 50%; }
+.mark.dash { border-style: dashed; }
+.keybox { border: 1.5px solid #D5D9E0; border-radius: 3.5mm; padding: 4mm 4.5mm; background: #FAFBFC; display: flex; flex-direction: column; gap: 3mm; }
+.keybox .kt { font-size: 8.3pt; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding-bottom: 2mm; border-bottom: 1px solid var(--line); }
+.keybox .legend { gap: 2.6mm; }
+.keybox .legend li { align-items: start; font-size: 10pt; }
+.keybox .legend .dot { margin-top: .3mm; }
+.keybox.row .cols { display: grid; gap: 3mm 6mm; }
+.tip .ms { display: inline; }
+.tip span { line-height: 1.35; }
+.fix p .ms { font-size: 8.4pt; }
+.cap { margin: 0; }
+.shotcap { font-size: 8.5pt; color: var(--muted); margin-top: 6mm; text-align: center; }
+.shotcap .ms { font-size: 8pt; }
+.page .fixes { gap: 3mm; }
+.page .fix { padding: 3mm 3.5mm; }
+.pin.sm { width: 4.6mm; height: 4.6mm; margin: -2.3mm 0 0 -2.3mm; font-size: 7pt; }
+.q { padding: 2.8mm 3.5mm; }
+.q .ms { font-size: 7.6pt; color: #8A93A2; text-transform: none; letter-spacing: 0; font-style: italic; font-weight: 400; display: inline; }
 </style>
 </head>
 <body>
@@ -152,169 +177,157 @@ kbd { font-family: Inter, sans-serif; font-size: 8.3pt; font-weight: 600; border
   <symbol id="info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
 </svg>
 
-<!-- PAGE 1 -->
+<!-- PAGE 1: what the guide is about -->
 <section class="page">
   <div class="cover">
-    <img src="logo-big.png" alt="Foodle logo">
+    <img src="logo.jpg" alt="Foodle logo">
     <div>
       <h1>Queue Announcer</h1>
-      <p class="sub">Staff guide: calling out orders at the counter</p>
+      <p class="sub">Staff guide: calling out orders at the counter<span class="ms">Panduan staf: memanggil pesanan di kaunter</span></p>
       <span class="tag">For version 1.4.0 and later</span>
     </div>
   </div>
 
   <h2 style="font-size:15pt">What this guide is about</h2>
-  <p class="intro">Queue Announcer calls out orders for you. You type the order code from the receipt, and the computer plays a bell and reads the code out loud, so customers know their food is ready. This guide shows you how to set it up and use it at the counter.</p>
+  <p class="intro">Queue Announcer calls out orders for you. You type the order code from the receipt, and the computer plays a bell and reads the code out loud, so customers know their food is ready. This guide shows you how to set it up and use it at the counter.
+  <span class="ms">Queue Announcer memanggil pesanan untuk anda. Taip kod pesanan daripada resit, dan komputer akan membunyikan loceng dan menyebut kod itu dengan kuat, supaya pelanggan tahu makanan mereka sudah siap. Panduan ini menunjukkan cara memasang dan menggunakannya di kaunter.</span></p>
 
   <div class="bubble">
     <div class="ic"><svg class="i"><use href="#bell"/></svg></div>
     <div class="lines">
       <span><b>“A, 1, 0, 5.</b> Please collect your order.”</span>
-      <span>“Once again, A, 1, 0, 5.”</span>
+      <span style="font-size:9pt;color:#A3AAB6;font-style:italic">What customers hear · Apa yang pelanggan dengar</span>
     </div>
   </div>
 
   <ul class="intro-list">
-    <li><svg class="i"><use href="#info"/></svg><span><b>Who it's for:</b> counter staff and supervisors.</span></li>
-    <li><svg class="i"><use href="#refresh"/></svg><span><b>Version:</b> written for Queue Announcer <b>1.4.0</b>.</span></li>
+    <li><svg class="i"><use href="#info"/></svg><span><b>Who it's for:</b> counter staff and supervisors.<span class="ms">Untuk: staf kaunter dan penyelia.</span></span></li>
+    <li><svg class="i"><use href="#refresh"/></svg><span><b>Version:</b> written for Queue Announcer <b>1.4.0</b>.<span class="ms">Versi: ditulis untuk Queue Announcer 1.4.0.</span></span></li>
+    <li><svg class="i"><use href="#keyboard"/></svg><span><b>Language:</b> English, with Bahasa Melayu in grey under each step.<span class="ms">Bahasa: Inggeris, dengan Bahasa Melayu (kelabu) di bawah setiap langkah.</span></span></li>
   </ul>
-
-
   <div class="foot"><span>Queue Announcer · Staff guide · v1.4.0</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>1</span></div>
 </section>
 
-<!-- CONTENTS -->
+<!-- PAGE 2: contents -->
 <section class="page" id="contents">
   <h2 style="font-size:20pt">Contents</h2>
-  <p class="intro" style="font-size:10.5pt;color:var(--soft)">Tap or click a section to jump straight to it. Every page has a <b>Contents</b> link at the bottom to come back here.</p>
+  <p class="intro" style="font-size:10.5pt;color:var(--soft)">Tap or click a section to jump straight to it. Every page has a <b>Contents</b> link at the bottom to come back here.<span class="ms">Tekan atau klik bahagian untuk terus ke halaman itu. Setiap halaman ada pautan Contents di bawah untuk kembali ke sini.</span></p>
   <ul class="toc">
-    <li><a href="#install"><span class="n">1</span><span class="t">Install<small>What you need and how to put it on a PC</small></span><span class="dots"></span><span class="pg">3</span></a></li>
-    <li><a href="#announce"><span class="n">2</span><span class="t">Announce an order<small>Type, announce, and what each button does</small></span><span class="dots"></span><span class="pg">4</span></a></li>
-    <li><a href="#recent"><span class="n">3</span><span class="t">Call again from Recent<small>Recall an order that was already called</small></span><span class="dots"></span><span class="pg">5</span></a></li>
-    <li><a href="#floating"><span class="n">4</span><span class="t">Floating window<small>Keeping the announcer on top of other apps</small></span><span class="dots"></span><span class="pg">5</span></a></li>
-    <li><a href="#settings"><span class="n">5</span><span class="t">Settings<small>Volume, unlocking with the PIN, and options</small></span><span class="dots"></span><span class="pg">6</span></a></li>
-    <li><a href="#fixes"><span class="n">6</span><span class="t">Quick fixes<small>What to do when something goes wrong</small></span><span class="dots"></span><span class="pg">8</span></a></li>
+    <li><a href="#install"><span class="n">1</span><span class="t">Install<small>What you need and how to put it on a PC · Pemasangan</small></span><span class="dots"></span><span class="pg">3</span></a></li>
+    <li><a href="#announce"><span class="n">2</span><span class="t">Announce an order<small>Type, announce, and what each button does · Umumkan pesanan</small></span><span class="dots"></span><span class="pg">4</span></a></li>
+    <li><a href="#recent"><span class="n">3</span><span class="t">Call again from Recent<small>Recall an order that was already called · Panggil semula</small></span><span class="dots"></span><span class="pg">5</span></a></li>
+    <li><a href="#floating"><span class="n">4</span><span class="t">Floating window<small>Keeping the announcer on top of other apps · Tetingkap terapung</small></span><span class="dots"></span><span class="pg">5</span></a></li>
+    <li><a href="#settings"><span class="n">5</span><span class="t">Settings<small>Volume, unlocking with the PIN, and options · Tetapan</small></span><span class="dots"></span><span class="pg">6</span></a></li>
+    <li><a href="#fixes"><span class="n">6</span><span class="t">Quick fixes<small>What to do when something goes wrong · Penyelesaian pantas</small></span><span class="dots"></span><span class="pg">8</span></a></li>
   </ul>
   <div class="foot"><span>Queue Announcer · Staff guide · v1.4.0</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span>2</span></div>
 </section>
 
-<!-- PAGE 2 -->
+<!-- PAGE 3: install -->
 <section class="page">
   <h2 id="install"><span class="n">1</span>Install</h2>
-  <h3 style="font-size:13pt">You need</h3>
+  <h3 style="font-size:13pt">You need<span class="ms">Anda perlukan</span></h3>
   <div class="tiles big">
-    <div class="tile"><div class="ib"><svg class="i"><use href="#monitor"/></svg></div><h3>Microsoft Edge</h3><p>On a computer, for the Clara voice.</p></div>
-    <div class="tile"><div class="ib"><svg class="i"><use href="#speaker"/></svg></div><h3>Speakers on</h3><p>Loud enough for the counter.</p></div>
-    <div class="tile"><div class="ib"><svg class="i"><use href="#wifi"/></svg></div><h3>Internet</h3><p>To start. Keeps working if it drops.</p></div>
+    <div class="tile"><div class="ib"><svg class="i"><use href="#monitor"/></svg></div><h3>Microsoft Edge</h3><p>On a computer, for the Clara voice.<span class="ms">Di komputer, untuk suara Clara.</span></p></div>
+    <div class="tile"><div class="ib"><svg class="i"><use href="#speaker"/></svg></div><h3>Speakers on</h3><p>Loud enough for the counter.<span class="ms">Pembesar suara hidup, cukup kuat untuk kaunter.</span></p></div>
+    <div class="tile"><div class="ib"><svg class="i"><use href="#wifi"/></svg></div><h3>Internet</h3><p>To start. Keeps working if it drops.<span class="ms">Untuk mula. Masih berfungsi jika internet terputus.</span></p></div>
   </div>
 
-  <h3 style="font-size:13pt;margin-top:4mm">Install it (one time per PC)</h3>
+  <h3 style="font-size:13pt;margin-top:4mm">Install it (one time per PC)<span class="ms">Pasang (sekali bagi setiap PC)</span></h3>
   <div class="flow three big">
     <div class="card">
       <span class="num">1</span>
       <div class="pic text"><svg class="i" style="color:#00C7B1"><use href="#monitor"/></svg><span class="url">haikalmhmn<br>.github.io/<br>queue-announcer</span></div>
-      <p class="cap">Open the link in Edge</p>
+      <p class="cap">Open the link in Edge<span class="ms">Buka pautan dalam Edge</span></p>
     </div>
     <div class="arrow"><svg class="i"><use href="#arrow"/></svg></div>
     <div class="card">
       <span class="num">2</span>
       <div class="pic text"><span class="menu"><span>⋯</span>›<span>Apps</span>›<span>Install this site as an app</span></span></div>
-      <p class="cap">Install it</p>
+      <p class="cap">Install it<span class="ms">Pasang aplikasi</span></p>
     </div>
     <div class="arrow"><svg class="i"><use href="#arrow"/></svg></div>
     <div class="card">
       <span class="num">3</span>
-      <div class="pic" style="background:#fff;box-shadow:0 0 0 1px #E3E6EB"><img src="logo-big.png" alt="" style="width:24mm;margin:3mm auto"></div>
-      <p class="cap">Open from the desktop icon</p>
+      <div class="pic" style="background:#fff;box-shadow:0 0 0 1px #E3E6EB"><img src="logo.jpg" alt="" style="width:24mm;margin:3mm auto"></div>
+      <p class="cap">Open from the desktop icon<span class="ms">Buka dari ikon di desktop</span></p>
     </div>
   </div>
-
-  <div class="tip"><svg class="i"><use href="#refresh"/></svg><span><b>Updates install themselves.</b> No need to reinstall.</span></div>
-
+  <div class="tip"><svg class="i"><use href="#refresh"/></svg><span><b>Updates install themselves.</b> No need to reinstall. <span class="ms" style="display:block">Kemas kini dipasang sendiri. Tidak perlu pasang semula.</span></span></div>
   <div class="foot"><span>Queue Announcer · Staff guide · v1.4.0</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span><a href="#contents">Contents</a> · 3</span></div>
 </section>
 
-<!-- PAGE 2 -->
+<!-- PAGE 4: announce, steps -->
 <section class="page">
   <h2 id="announce"><span class="n">2</span>Announce an order</h2>
-
-  <div class="flow three big">
+  <div class="flow three">
     <div class="card">
       <span class="num">1</span>
-      <div class="pic"><img src="crop-code.png" alt=""></div>
-      <p class="cap">Type the code<small>From the receipt</small></p>
+      <div class="pic"><img src="crop-code.jpg" alt=""></div>
+      <p class="cap">Type the code<small>From the receipt</small><span class="ms">Taip kod daripada resit</span></p>
     </div>
     <div class="arrow"><svg class="i"><use href="#arrow"/></svg></div>
     <div class="card">
       <span class="num">2</span>
-      <div class="pic"><img src="crop-actions.png" alt=""></div>
-      <p class="cap">Tap Announce</p>
+      <div class="pic"><img src="crop-actions.jpg" alt=""></div>
+      <p class="cap">Tap Announce<span class="ms">Tekan "Announce"</span></p>
     </div>
     <div class="arrow"><svg class="i"><use href="#arrow"/></svg></div>
     <div class="card">
       <span class="num">3</span>
-      <div class="pic"><img src="crop-speaking.png" alt=""></div>
-      <p class="cap">Bell + voice, twice<small>Wait until it finishes</small></p>
+      <div class="pic"><img src="crop-speaking.jpg" alt=""></div>
+      <p class="cap">Bell, then the voice<small>Wait until it finishes</small><span class="ms">Loceng, kemudian suara. Tunggu hingga selesai.</span></p>
     </div>
   </div>
-
-  <div class="shotrow">
-    <div class="shot">
-      <div class="frame">
-        <img src="main.png" alt="Main screen">
-      <span class="pin" style="left:39.5%;top:4.8%">1</span>
-      <span class="pin" style="left:60%;top:7.9%">2</span>
-      <span class="pin" style="left:100%;top:7.9%">3</span>
-      <span class="pin" style="left:100%;top:21%">4</span>
-      <span class="pin" style="left:-2%;top:47%">5</span>
-      <span class="pin" style="left:104%;top:81%">6</span>
-      <span class="pin" style="left:12.5%;top:103%">7</span>
-      <span class="pin" style="left:50%;top:103%">8</span>
-      <span class="pin" style="left:87.5%;top:103%">9</span>
-    </div>
-    </div>
-    <ul class="legend">
-      <li><span class="dot">1</span><span>Now calling</span></li>
-      <li><span class="dot">2</span><span><b>Repeat</b> last order</span></li>
-      <li><span class="dot">3</span><span><b>Mute</b> (red = off)</span></li>
-      <li><span class="dot">4</span><span><b>✕</b> clear code</span></li>
-      <li><span class="dot">5</span><span>Letters and numbers</span></li>
-      <li><span class="dot">6</span><span><b>⌫</b> delete one</span></li>
-      <li><span class="dot">7</span><span><b>Recent</b> orders</span></li>
-      <li><span class="dot">8</span><span><b>Announce</b></span></li>
-      <li><span class="dot">9</span><span><b>Settings</b></span></li>
-    </ul>
+  <div class="shotrow" style="grid-template-columns:66mm 1fr;align-items:start">
+    <div class="shot"><div class="frame"><img src="main.jpg" alt="Main screen">
+      <span class="mark" style="left:6.5%;top:2.8%;width:24.5%;height:10.6%"></span>
+      <span class="mark round" style="left:66%;top:3%;width:14%;height:9.9%"></span>
+      <span class="mark round" style="left:81%;top:3%;width:14%;height:9.9%"></span>
+      <span class="mark round" style="left:82.5%;top:16.7%;width:12%;height:8.45%"></span>
+      <span class="mark dash" style="left:3%;top:29.6%;width:94%;height:57.2%"></span>
+      <span class="mark" style="left:81.25%;top:76.2%;width:15.5%;height:9.4%"></span>
+      <span class="mark" style="left:3.25%;top:87.1%;width:18.5%;height:11.3%"></span>
+      <span class="mark" style="left:22.25%;top:87.1%;width:55.5%;height:11.3%"></span>
+      <span class="mark" style="left:78.25%;top:87.1%;width:18.5%;height:11.3%"></span>
+      <span class="pin" style="left:37%;top:8%">1</span>
+      <span class="pin" style="left:59.5%;top:8%">2</span>
+      <span class="pin" style="left:102.6%;top:8%">3</span>
+      <span class="pin" style="left:102.6%;top:21%">4</span>
+      <span class="pin" style="left:12%;top:61%">5</span>
+      <span class="pin" style="left:102.6%;top:81%">6</span>
+      <span class="pin" style="left:12.5%;top:103.4%">7</span>
+      <span class="pin" style="left:50%;top:103.4%">8</span>
+      <span class="pin" style="left:87.5%;top:103.4%">9</span>
+    </div></div>
+    <div class="keybox"><span class="kt">Key · Petunjuk</span><ul class="legend"><li><span class="dot">1</span><span>Now calling<span class="ms">Pesanan yang sedang dipanggil</span></span></li><li><span class="dot">2</span><span><b>Repeat</b> last order<span class="ms">Ulang pesanan terakhir</span></span></li><li><span class="dot">3</span><span><b>Mute</b> (red = sound off)<span class="ms">Senyap (merah = bunyi mati)</span></span></li><li><span class="dot">4</span><span><b>✕</b> clear the code<span class="ms">Padam semua kod</span></span></li><li><span class="dot">5</span><span>Letters and numbers<span class="ms">Huruf dan nombor</span></span></li><li><span class="dot">6</span><span><b>⌫</b> delete one<span class="ms">Padam satu aksara</span></span></li><li><span class="dot">7</span><span><b>Recent</b> orders<span class="ms">Pesanan terkini</span></span></li><li><span class="dot">8</span><span><b>Announce</b><span class="ms">Umumkan</span></span></li><li><span class="dot">9</span><span><b>Settings</b><span class="ms">Tetapan</span></span></li></ul></div>
   </div>
-
-  <div class="tips">
-    <div class="tip"><svg class="i"><use href="#clock"/></svg><span><b>One at a time.</b> Next code can be typed while it speaks.</span></div>
-    <div class="tip"><svg class="i"><use href="#del"/></svg><span>Up to <b>8</b> characters, e.g. <b>T-042</b>.</span></div>
-    <div class="tip"><svg class="i"><use href="#keyboard"/></svg><span>Keyboard: <kbd>Enter</kbd> announce, <kbd>Esc</kbd> clear.</span></div>
+  <div class="tips" style="margin-top:4mm">
+    <div class="tip"><svg class="i"><use href="#clock"/></svg><span><b>One at a time.</b> Type the next code while it speaks. <span class="ms" style="display:block">Satu pada satu masa. Taip kod seterusnya semasa ia bercakap.</span></span></div>
+    <div class="tip"><svg class="i"><use href="#del"/></svg><span>Up to <b>8</b> characters, e.g. <b>T-042</b>. <span class="ms" style="display:block">Maksimum 8 aksara, cth. T-042.</span></span></div>
+    <div class="tip"><svg class="i"><use href="#keyboard"/></svg><span>Keyboard: <kbd>Enter</kbd> announce, <kbd>Esc</kbd> clear. <span class="ms" style="display:block">Papan kekunci: Enter umumkan, Esc padam.</span></span></div>
   </div>
-
   <div class="foot"><span>Queue Announcer · Staff guide · v1.4.0</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span><a href="#contents">Contents</a> · 4</span></div>
 </section>
 
-<!-- PAGE 3 -->
+
+<!-- PAGE 6: recent -->
 <section class="page">
   <h2 id="recent"><span class="n">3</span>Call again from Recent</h2>
-  <div class="shotrow">
-    <div class="shot">
-      <div class="frame">
-        <img src="recent.png" alt="Recent screen">
-      <span class="pin" style="left:100%;top:17%">1</span>
-      <span class="pin" style="left:30%;top:15.5%">2</span>
-      <span class="pin" style="left:50%;top:103%">3</span>
+  <div class="shotrow" style="grid-template-columns:62mm 1fr;align-items:start">
+    <div class="shot"><div class="frame"><img src="recent.jpg" alt="Recent screen">
+      <span class="mark" style="left:67.75%;top:12.15%;width:27.5%;height:9.5%"></span>
+      <span class="mark" style="left:6.75%;top:12.7%;width:21%;height:8.5%"></span>
+      <span class="mark" style="left:3.25%;top:87.1%;width:93.5%;height:11.3%"></span>
+      <span class="pin" style="left:102.6%;top:17%">1</span>
+      <span class="pin" style="left:33%;top:17%">2</span>
+      <span class="pin" style="left:50%;top:103.4%">3</span>
+    </div></div>
+    <div style="display:flex;flex-direction:column;gap:4mm">
+      <div class="keybox"><span class="kt">Key · Petunjuk</span><ul class="legend"><li><span class="dot">1</span><span><b>Recall</b> plays it again<span class="ms">Recall: panggil semula</span></span></li><li><span class="dot">2</span><span>Code, time, times called<span class="ms">Kod, masa, berapa kali dipanggil</span></span></li><li><span class="dot">3</span><span><b>Back</b> to the keypad<span class="ms">Kembali ke papan kekunci</span></span></li></ul></div>
+      <div class="tip"><svg class="i"><use href="#info"/></svg><span>Today only, on this PC. Swipe to scroll. <span class="ms" style="display:block">Hari ini sahaja, di PC ini. Leret untuk skrol.</span></span></div>
     </div>
-    </div>
-    <ul class="legend">
-      <li><span class="dot">1</span><span><b>Recall</b> plays it again</span></li>
-      <li><span class="dot">2</span><span>Code, time, times called</span></li>
-      <li><span class="dot">3</span><span><b>Back</b> to the keypad</span></li>
-      <li style="grid-template-columns:7mm 1fr;color:var(--muted)"><svg class="i" style="width:5.5mm;height:5.5mm;justify-self:center"><use href="#info"/></svg><span>Today only, on this PC. Swipe to scroll.</span></li>
-    </ul>
   </div>
-
   <h2 id="floating"><span class="n">4</span>Floating window</h2>
   <div class="diagram">
     <div class="monitor">
@@ -325,133 +338,116 @@ kbd { font-family: Inter, sans-serif; font-size: 8.3pt; font-weight: 600; border
       <span class="lbl" style="right:26%;bottom:7%">Small tab: don't close</span>
     </div>
     <div class="keys">
-      <div class="key"><span class="sw" style="background:#15171C;box-shadow:0 0 0 1.2px #00C7B1"></span><span><b>First tap</b> → announcer floats on top. Drag it where you like.</span></div>
-      <div class="key"><span class="sw" style="background:#15171C"></span><span><b>Small tab</b> moves to the bottom right.</span></div>
-      <div style="padding-left:9.5mm"><img src="tab.png" alt="Small tab" style="width:40mm;border-radius:2mm;box-shadow:0 0 0 1px #2a2d35;display:block"></div>
-      <div class="key"><span></span><span><b>Bring it back</b> returns it to the main window.</span></div>
+      <div class="key"><span class="sw" style="background:#15171C;box-shadow:0 0 0 1.2px #00C7B1"></span><span><b>First tap</b>: the announcer floats on top. Drag it where you like.<span class="ms">Tekanan pertama: announcer terapung di atas. Seret ke mana-mana.</span></span></div>
+      <div class="key"><span class="sw" style="background:#15171C"></span><span><b>Small tab</b> moves to the bottom right.<span class="ms">Tab kecil berpindah ke bawah kanan.</span></span></div>
+      <div style="padding-left:9.5mm"><img src="tab.jpg" alt="Small tab" style="width:40mm;border-radius:2mm;box-shadow:0 0 0 1px #2a2d35;display:block"></div>
+      <div class="key"><span></span><span><b>Bring it back</b> returns it to the main window.<span class="ms">Tekan "Bring it back" untuk kembali ke tetingkap utama.</span></span></div>
     </div>
   </div>
-  <div class="tip warn"><svg class="i"><use href="#x"/></svg><span><b>Don't close the small tab</b>: it closes the announcer too. Minimize it with <b>–</b> instead.</span></div>
-
+  <div class="tip warn"><svg class="i"><use href="#x"/></svg><span><b>Don't close the small tab</b>: it closes the announcer too. Minimize it with <b>–</b> instead. <span class="ms" style="display:block">Jangan tutup tab kecil: announcer juga akan tertutup. Kecilkan dengan butang – sahaja.</span></span></div>
   <div class="foot"><span>Queue Announcer · Staff guide · v1.4.0</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span><a href="#contents">Contents</a> · 5</span></div>
 </section>
 
-<!-- PAGE 4 -->
+
+<!-- PAGE 8: settings, locked -->
 <section class="page">
   <h2 id="settings"><span class="n">5</span>Settings</h2>
   <div style="display:grid;grid-template-columns:56mm 56mm;gap:18mm;justify-content:center;padding-top:2mm">
-    <div class="shot"><div class="frame">
-      <img src="settings-locked.png" alt="Settings, locked">
+    <div class="shot"><div class="frame"><img src="settings-locked.jpg" alt="Settings, locked">
+      <span class="mark" style="left:3.25%;top:15%;width:93.5%;height:9.5%"></span>
+      <span class="mark" style="left:72.5%;top:32.4%;width:22.75%;height:9.5%"></span>
+      <span class="mark" style="left:3.25%;top:45.8%;width:93.5%;height:10.2%"></span>
+      <span class="mark" style="left:3.25%;top:61.4%;width:93.5%;height:9.5%"></span>
       <span class="pin" style="left:58%;top:11.3%">1</span>
-      <span class="pin" style="left:101%;top:37%">2</span>
-      <span class="pin" style="left:-5%;top:51%">3</span>
-      <span class="pin" style="left:-5%;top:66%">4</span>
-    </div><p class="cap" style="font-size:8.5pt;color:var(--muted);margin-top:4mm;text-align:center">Locked (normal)</p></div>
-    <div class="shot"><div class="frame">
-      <img src="pinpad.png" alt="PIN pad">
-      <span class="pin" style="left:81%;top:27%">5</span>
-    </div><p class="cap" style="font-size:8.5pt;color:var(--muted);margin-top:4mm;text-align:center">After tapping Unlock</p></div>
+      <span class="pin" style="left:102.6%;top:37%">2</span>
+      <span class="pin" style="left:10%;top:51%">3</span>
+      <span class="pin" style="left:55%;top:66%">4</span>
+    </div><p class="shotcap">Locked (normal)<span class="ms">Berkunci (biasa)</span></p></div>
+    <div class="shot"><div class="frame"><img src="pinpad.jpg" alt="PIN pad">
+      <span class="mark" style="left:30%;top:24.1%;width:40%;height:5.3%"></span>
+      <span class="pin" style="left:77%;top:26.7%">5</span>
+    </div><p class="shotcap">After tapping Unlock<span class="ms">Selepas tekan Unlock</span></p></div>
   </div>
-  <ul class="legend" style="padding:0 6mm">
-    <li><span class="dot">1</span><span><b>Volume</b>: anyone can change it</span></li>
-    <li><span class="dot">2</span><span><b>Unlock</b> to change anything else</span></li>
-    <li><span class="dot">3</span><span><b>Reset to default settings</b>: tap twice, no PIN</span></li>
-    <li><span class="dot">4</span><span><b>About &amp; version</b>: open to everyone</span></li>
-    <li><span class="dot">5</span><span>Type the <b>PIN</b> from IT</span></li>
-  </ul>
+  <div class="keybox row"><span class="kt">Key · Petunjuk</span><div class="cols" style="grid-template-columns:repeat(2,1fr)"><ul class="legend"><li><span class="dot">1</span><span><b>Volume</b>: anyone can change it<span class="ms">Kelantangan: sesiapa boleh ubah</span></span></li><li><span class="dot">2</span><span><b>Unlock</b> to change anything else<span class="ms">Tekan "Unlock" untuk ubah tetapan lain</span></span></li><li><span class="dot">3</span><span><b>Reset to default settings</b>: tap twice, no PIN<span class="ms">Tetapkan semula: tekan dua kali, tanpa PIN</span></span></li></ul><ul class="legend"><li><span class="dot">4</span><span><b>About &amp; version</b>: open to everyone<span class="ms">Terbuka untuk semua</span></span></li><li><span class="dot">5</span><span>Type the <b>PIN</b> from IT<span class="ms">Masukkan PIN daripada IT</span></span></li></ul></div></div>
   <div class="tips">
-    <div class="tip"><svg class="i"><use href="#clock"/></svg><span>Locks again when you leave, or after <b>2 minutes</b>.</span></div>
-    <div class="tip warn"><svg class="i"><use href="#x"/></svg><span><b>5 wrong tries</b>: wait 30 seconds.</span></div>
-    <div class="tip"><svg class="i"><use href="#info"/></svg><span>Don't know the PIN? Ask <b>IT</b>.</span></div>
+    <div class="tip"><svg class="i"><use href="#clock"/></svg><span>Locks again when you leave, or after <b>2 minutes</b>. <span class="ms" style="display:block">Berkunci semula bila keluar, atau selepas 2 minit.</span></span></div>
+    <div class="tip warn"><svg class="i"><use href="#x"/></svg><span><b>5 wrong tries</b>: wait 30 seconds. <span class="ms" style="display:block">5 kali salah: tunggu 30 saat.</span></span></div>
+    <div class="tip"><svg class="i"><use href="#info"/></svg><span>Don't know the PIN? Ask <b>IT</b>. <span class="ms" style="display:block">Tak tahu PIN? Tanya IT.</span></span></div>
   </div>
   <div class="foot"><span>Queue Announcer · Staff guide · v1.4.0</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span><a href="#contents">Contents</a> · 6</span></div>
 </section>
 
+<!-- PAGE 9: settings, unlocked -->
 <section class="page">
-  <h2 style="font-size:15pt">Settings, unlocked</h2>
+  <h2 style="font-size:15pt">Settings, unlocked<span class="ms">Tetapan, selepas dibuka</span></h2>
   <div style="display:grid;grid-template-columns:repeat(3,48mm);gap:10mm;justify-content:center;padding-top:2mm">
-    <div class="shot"><div class="frame">
-      <img src="settings.png" alt="Settings unlocked, top">
-      <span class="pin" style="left:102%;top:37%">6</span>
-      <span class="pin" style="left:63%;top:54%">7</span>
-      <span class="pin" style="left:-6%;top:74%">8</span>
-      <span class="pin" style="left:-6%;top:89%">9</span>
+    <div class="shot"><div class="frame"><img src="settings.jpg" alt="Settings unlocked, top">
+      <span class="mark" style="left:67.95%;top:32.3%;width:27.3%;height:9.7%"></span>
+      <span class="mark" style="left:3.25%;top:49.5%;width:93.5%;height:9.7%"></span>
+      <span class="mark" style="left:3.25%;top:64.3%;width:93.5%;height:10.4%"></span>
+      <span class="mark" style="left:3.25%;top:79.8%;width:93.5%;height:10.4%"></span>
+      <span class="pin" style="left:102.6%;top:37.15%">6</span>
+      <span class="pin" style="left:80%;top:54.35%">7</span>
+      <span class="pin" style="left:-2.6%;top:69.5%">8</span>
+      <span class="pin" style="left:-2.6%;top:85%">9</span>
     </div></div>
-    <div class="shot"><div class="frame">
-      <img src="settings-mid.png" alt="Settings unlocked, middle">
-      <span class="pin" style="left:102%;top:42%">10</span>
-      <span class="pin" style="left:-6%;top:57%">11</span>
-      <span class="pin" style="left:-6%;top:74.6%">12</span>
+    <div class="shot"><div class="frame"><img src="settings-mid.jpg" alt="Settings unlocked, middle">
+      <span class="mark" style="left:79.25%;top:33.7%;width:16.5%;height:8.9%"></span>
+      <span class="mark" style="left:3.25%;top:48.1%;width:93.5%;height:9.7%"></span>
+      <span class="mark dash" style="left:3.25%;top:62.9%;width:93.5%;height:19.9%"></span>
+      <span class="pin" style="left:62%;top:38.15%">10</span>
+      <span class="pin" style="left:-2.6%;top:53%">11</span>
+      <span class="pin" style="left:-2.6%;top:72.8%">12</span>
     </div></div>
-    <div class="shot"><div class="frame">
-      <img src="settings2.png" alt="Settings unlocked, bottom">
-      <span class="pin" style="left:-6%;top:25%">13</span>
-      <span class="pin" style="left:-6%;top:37%">14</span>
-      <span class="pin" style="left:102%;top:47%">15</span>
+    <div class="shot"><div class="frame"><img src="settings2.jpg" alt="Settings unlocked, bottom">
+      <span class="mark" style="left:3.25%;top:20.1%;width:93.5%;height:10.4%"></span>
+      <span class="mark" style="left:3.25%;top:31.7%;width:93.5%;height:10.4%"></span>
+      <span class="mark" style="left:79.25%;top:42.3%;width:16.5%;height:8.9%"></span>
+      <span class="pin" style="left:-2.6%;top:25.4%">13</span>
+      <span class="pin" style="left:-2.6%;top:37%">14</span>
+      <span class="pin" style="left:62%;top:46.75%">15</span>
     </div></div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3mm 6mm;padding:0 2mm">
-    <ul class="legend">
-      <li><span class="dot">6</span><span><b>Lock now</b></span></li>
-      <li><span class="dot">7</span><span><b>Voice</b>: Clara</span></li>
-      <li><span class="dot">8</span><span><b>Speed</b> of the words</span></li>
-      <li><span class="dot">9</span><span>Say it 1, 2 or 3 times</span></li>
-    </ul>
-    <ul class="legend">
-      <li><span class="dot">10</span><span><b>Bell</b> on / off</span></li>
-      <li><span class="dot">11</span><span>Bell sound + <b>Test</b></span></li>
-      <li><span class="dot">12</span><span>What will be said</span></li>
-    </ul>
-    <ul class="legend">
-      <li><span class="dot">13</span><span><b>Test voice</b></span></li>
-      <li><span class="dot">14</span><span>Open <b>floating window</b></span></li>
-      <li><span class="dot">15</span><span>Float at first tap</span></li>
-    </ul>
-  </div>
-  <div class="tip"><svg class="i"><use href="#info"/></svg><span>Each PC keeps its own settings. <b>Reset to default</b> brings back: volume 100%, Normal speed, said once, bell on.</span></div>
+  <div class="keybox row"><span class="kt">Key · Petunjuk</span><div class="cols" style="grid-template-columns:repeat(3,1fr)"><ul class="legend"><li><span class="dot">6</span><span><b>Lock now</b><span class="ms">Kunci sekarang</span></span></li><li><span class="dot">7</span><span><b>Voice</b>: Clara<span class="ms">Suara: Clara</span></span></li><li><span class="dot">8</span><span><b>Speed</b> of the words<span class="ms">Kelajuan sebutan</span></span></li><li><span class="dot">9</span><span>Say it 1, 2 or 3 times<span class="ms">Sebut 1, 2 atau 3 kali</span></span></li></ul><ul class="legend"><li><span class="dot">10</span><span><b>Bell</b> on / off<span class="ms">Loceng hidup / mati</span></span></li><li><span class="dot">11</span><span>Bell sound + <b>Test</b><span class="ms">Bunyi loceng + uji</span></span></li><li><span class="dot">12</span><span>What will be said<span class="ms">Apa yang akan disebut</span></span></li></ul><ul class="legend"><li><span class="dot">13</span><span><b>Test voice</b><span class="ms">Uji suara</span></span></li><li><span class="dot">14</span><span>Open the <b>floating window</b><span class="ms">Buka tetingkap terapung</span></span></li><li><span class="dot">15</span><span>Float at first tap<span class="ms">Terapung pada tekanan pertama</span></span></li></ul></div></div>
+  <div class="tip"><svg class="i"><use href="#info"/></svg><span>Each PC keeps its own settings. <b>Reset to default</b> brings back: volume 100%, Normal speed, said once, bell on. <span class="ms" style="display:block">Setiap PC simpan tetapan sendiri. Reset kembalikan: kelantangan 100%, kelajuan Normal, sebut sekali, loceng hidup.</span></span></div>
   <div class="foot"><span>Queue Announcer · Staff guide · v1.4.0</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span><a href="#contents">Contents</a> · 7</span></div>
 </section>
 
-<!-- PAGE 5 -->
-<section class="page">
+<!-- PAGE 10: quick fixes -->
+<section class="page" style="gap:4.5mm">
   <h2 id="fixes"><span class="n">6</span>Quick fixes</h2>
   <div class="fixes">
-    <div class="fix"><div class="ib"><svg class="i"><use href="#muted"/></svg></div><div><h3>No sound</h3><p>Mute not red? Volume up in Settings? Edge not muted in Windows <b>Volume mixer</b>?</p></div></div>
-    <div class="fix"><div class="ib"><svg class="i"><use href="#bell"/></svg></div><div><h3>Bell plays, no voice</h3><p>Check Edge isn't muted, then tap <b>Repeat</b>. Check the internet.</p></div></div>
-    <div class="fix"><div class="ib"><svg class="i"><use href="#robot"/></svg></div><div><h3>Voice sounds robotic</h3><p>Open from the desktop icon, not another browser. Update Edge.</p></div></div>
-    <div class="fix"><div class="ib"><svg class="i"><use href="#window"/></svg></div><div><h3>No floating window</h3><p>Settings → <b>Float on top of other apps</b>. Edge on a computer only.</p></div></div>
-    <div class="fix"><div class="ib"><svg class="i"><use href="#x"/></svg></div><div><h3>Announcer disappeared</h3><p>The small tab was closed. Open the app again from the desktop icon.</p></div></div>
-    <div class="fix"><div class="ib"><svg class="i"><use href="#info"/></svg></div><div><h3>Don't know the PIN</h3><p>Ask <b>IT</b>. Volume works without it.</p></div></div>
-    <div class="fix"><div class="ib"><svg class="i"><use href="#refresh"/></svg></div><div><h3>Settings changed by mistake</h3><p>Settings → <b>Reset to default settings</b>, tap it twice.</p></div></div>
-    <div class="fix"><div class="ib"><svg class="i"><use href="#refresh"/></svg></div><div><h3>Need the newest version</h3><p>Close the app fully and reopen. Check <b>About &amp; version</b>.</p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#muted"/></svg></div><div><h3>No sound</h3><p>Mute not red? Volume up in Settings? Edge not muted in Windows <b>Volume mixer</b>?<span class="ms">Tiada bunyi: Mute merah? Kelantangan rendah? Edge disenyapkan dalam Volume mixer?</span></p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#bell"/></svg></div><div><h3>Bell plays, no voice</h3><p>Check Edge isn't muted, then tap <b>Repeat</b>. Check the internet.<span class="ms">Loceng berbunyi, tiada suara: pastikan Edge tidak senyap, tekan Repeat. Semak internet.</span></p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#robot"/></svg></div><div><h3>Voice sounds robotic</h3><p>Open from the desktop icon, not another browser. Update Edge.<span class="ms">Suara seperti robot: buka dari ikon desktop, bukan pelayar lain. Kemas kini Edge.</span></p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#window"/></svg></div><div><h3>No floating window</h3><p>Settings → <b>Float on top of other apps</b>. Edge on a computer only.<span class="ms">Tiada tetingkap terapung: Settings → "Float on top of other apps". Edge di komputer sahaja.</span></p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#x"/></svg></div><div><h3>Announcer disappeared</h3><p>The small tab was closed. Open the app again from the desktop icon.<span class="ms">Announcer hilang: tab kecil telah ditutup. Buka semula dari ikon desktop.</span></p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#info"/></svg></div><div><h3>Don't know the PIN</h3><p>Ask <b>IT</b>. Volume works without it.<span class="ms">Tak tahu PIN: tanya IT. Kelantangan boleh diubah tanpa PIN.</span></p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#refresh"/></svg></div><div><h3>Settings changed by mistake</h3><p>Settings → <b>Reset to default settings</b>, tap it twice.<span class="ms">Tetapan berubah: Settings → "Reset to default settings", tekan dua kali.</span></p></div></div>
+    <div class="fix"><div class="ib"><svg class="i"><use href="#refresh"/></svg></div><div><h3>Need the newest version</h3><p>Close the app fully and reopen. Check <b>About &amp; version</b>.<span class="ms">Versi terkini: tutup app sepenuhnya dan buka semula. Semak "About &amp; version".</span></p></div></div>
   </div>
-
-  <div class="shotrow" style="grid-template-columns:54mm 1fr;margin-top:2mm">
-    <div class="shot"><div class="frame">
-      <img src="about.png" alt="About screen">
-      <span class="pin" style="left:77%;top:41%">1</span>
-      <span class="pin" style="left:103%;top:49.5%">2</span>
-      <span class="pin" style="left:103%;top:83%">3</span>
+  <h2 style="font-size:15pt">Which version am I on?<span class="ms">Saya guna versi mana?</span></h2>
+  <div class="shotrow" style="grid-template-columns:42mm 1fr;align-items:center">
+    <div class="shot"><div class="frame"><img src="about.jpg" alt="About screen">
+      <span class="mark" style="left:37.5%;top:36.8%;width:25%;height:4.75%"></span>
+      <span class="mark" style="left:3.25%;top:43.3%;width:93.5%;height:12.3%"></span>
+      <span class="mark" style="left:3.25%;top:68.7%;width:93.5%;height:29%"></span>
+      <span class="pin sm" style="left:68.5%;top:39.2%">1</span>
+      <span class="pin sm" style="left:102.6%;top:49.5%">2</span>
+      <span class="pin sm" style="left:102.6%;top:83%">3</span>
     </div></div>
-    <div style="display:flex;flex-direction:column;gap:5mm">
-      <h3>Which version am I on?</h3>
-      <ul class="legend">
-        <li><span class="dot">1</span><span>Version number</span></li>
-        <li><span class="dot">2</span><span>Up to date or not</span></li>
-        <li><span class="dot">3</span><span>What changed (older versions below)</span></li>
-      </ul>
-    </div>
+    <div class="keybox"><span class="kt">Key · Petunjuk</span><ul class="legend"><li><span class="dot">1</span><span>Version number<span class="ms">Nombor versi</span></span></li><li><span class="dot">2</span><span>Up to date or not<span class="ms">Terkini atau tidak</span></span></li><li><span class="dot">3</span><span>What changed (older versions below)<span class="ms">Apa yang berubah (versi lama di bawah)</span></span></li></ul></div>
   </div>
-
+  <h3 style="font-size:13pt">Quick reference<span class="ms">Rujukan pantas</span></h3>
   <div class="quick">
-    <div class="q"><span>Call</span><b>Code → Announce</b></div>
-    <div class="q"><span>Again</span><b>Repeat · Recall</b></div>
-    <div class="q"><span>Silence</span><b>Mute</b></div>
-    <div class="q"><span>Fix typing</span><b>⌫ one · ✕ all</b></div>
+    <div class="q"><span>Call <span class="ms">· Panggil</span></span><b>Code → Announce</b></div>
+    <div class="q"><span>Again <span class="ms">· Ulang</span></span><b>Repeat · Recall</b></div>
+    <div class="q"><span>Silence <span class="ms">· Senyap</span></span><b>Mute</b></div>
+    <div class="q"><span>Fix typing <span class="ms">· Betulkan</span></span><b>⌫ one · ✕ all</b></div>
   </div>
-
   <div class="foot"><span>Queue Announcer · Staff guide · v1.4.0</span><span>Prepared by: Haikal (IT &amp; Merchant Support) · Created 6 Nov 2026</span><span><a href="#contents">Contents</a> · 8</span></div>
 </section>
+
 
 </body>
 </html>
