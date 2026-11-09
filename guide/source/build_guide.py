@@ -15,6 +15,7 @@ BASE_CSS = open(os.path.join(HERE, "base.css"), encoding="utf-8").read()
 ICONS = open(os.path.join(HERE, "icons.svg"), encoding="utf-8").read()
 
 EXTRA_CSS = """
+a.url{color:#00A896;text-decoration:underline;text-underline-offset:1.5px}
 /* Foodle additions: Malay lines, outlined markers, Key boxes */
 .ms { display: block; font-weight: 400; color: var(--muted); font-size: 8.6pt; font-style: italic; margin-top: .4mm; line-height: 1.35; }
 .intro .ms { font-size: 10pt; margin-top: 2mm; }
@@ -210,8 +211,8 @@ BODY = f"""
   <div class="flow three big">
     <div class="card">
       <span class="num">1</span>
-      <div class="pic text"><svg class="i" style="color:#00C7B1"><use href="#monitor"/></svg><span class="url">haikalmhmn<br>.github.io/<br>queue-announcer</span></div>
-      <p class="cap">Open the link in Edge{ms('Buka pautan dalam Edge')}</p>
+      <div class="pic text"><svg class="i" style="color:#00C7B1"><use href="#monitor"/></svg><a class="url" href="https://haikalmhmn.github.io/queue-announcer/">haikalmhmn<br>.github.io/<br>queue-announcer</a></div>
+      <p class="cap">Click the link, open it in Edge{ms('Klik pautan, buka dalam Edge')}</p>
     </div>
     {ARROW}
     <div class="card">
